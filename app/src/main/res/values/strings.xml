@@ -1,0 +1,23 @@
+<resources>
+
+    <string name="app_name">煎蛋</string>
+    <string name="title_activity_comment_list">吐槽</string>
+    <string name="title_activity_push_comment">回复</string>
+    <string name="action_push">发送</string>
+    <string name="action_share">分享</string>
+    <string name="action_copy">复制</string>
+    <string name="action_open">浏览器打开</string>
+    <string name="title_activity_fresh_news_detail">新鲜事</string>
+    <string name="title_activity_video_detail">VideoDetailActivity</string>
+    <string name="title_activity_joke">段子</string>
+    <string name="title_activity_setting">设置</string>
+    <string name="loading">加载中...</string>
+    <string name="action_more">更多</string>
+
+    <string name="one_more_exit">再按一次退出程序</string>
+    <string name="no_network">无网络连接</string>
+    <string name="open_network">去开启网络?</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+
+</resources>

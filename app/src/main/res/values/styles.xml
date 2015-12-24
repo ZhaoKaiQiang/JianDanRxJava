@@ -1,0 +1,54 @@
+<resources>
+
+    <!--Base Theme-->
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light">
+        <!--no actionbar and title-->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!--action bar color-->
+        <item name="colorPrimary">@color/primary</item>
+        <!--status bar color-->
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <!--window background-->
+        <item name="android:windowBackground">@color/comment_bg</item>
+    </style>
+
+    <!-- Normal application theme. -->
+    <style name="AppTheme" parent="AppTheme.Base">
+        <item name="actionBarStyle">@style/JDActionBarStyle</item>
+        <item name="drawerArrowStyle">@style/AppTheme.JDDrawerArrowStyle</item>
+        <!--actionbar text color-->
+        <item name="android:textColorPrimary">@color/primary_text</item>
+    </style>
+
+    <!-- 设置标题栏样式 -->
+    <style name="JDActionBarStyle" parent="Widget.AppCompat.Light.ActionBar">
+        <item name="titleTextStyle">@style/ActionBarTitleStyle</item>
+    </style>
+
+    <style name="AppTheme.JDDrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <!--是否开启导航图标的旋转效果-->
+        <item name="spinBars">false</item>
+        <item name="color">@android:color/white</item>
+    </style>
+
+    <!-- 标题栏文字样式 -->
+    <style name="ActionBarTitleStyle" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/actionbar_title</item>
+    </style>
+
+    <!--图片详情页 -->
+    <style name="ImageDetailActivityTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!-- 新鲜事详情页-->
+    <style name="FreshNewsDetailActivityTheme" parent="@style/AppTheme">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
+</resources>
