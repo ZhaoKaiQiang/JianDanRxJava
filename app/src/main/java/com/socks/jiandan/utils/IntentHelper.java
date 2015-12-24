@@ -7,8 +7,10 @@ import android.provider.Settings;
 
 import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.model.FreshNews;
+import com.socks.jiandan.model.Picture;
 import com.socks.jiandan.ui.activity.CommentListActivity;
 import com.socks.jiandan.ui.activity.FreshNewsDetailActivity;
+import com.socks.jiandan.ui.activity.ImageDetailActivity;
 import com.socks.jiandan.ui.activity.PushCommentActivity;
 
 import java.util.ArrayList;
@@ -47,4 +49,19 @@ public class IntentHelper {
         context.startActivityForResult(intent, 0);
     }
 
+
+    public static void toImageDetailActivity(Context context, Picture picture){
+        Intent intent = new Intent(context, ImageDetailActivity.class);
+
+        intent.putExtra(BaseActivity.DATA_IMAGE_AUTHOR, picture.getComment_author());
+        intent.putExtra(BaseActivity.DATA_IMAGE_URL, picture.getPics());
+        intent.putExtra(BaseActivity.DATA_IMAGE_ID, picture.getComment_ID());
+        intent.putExtra(BaseActivity.DATA_THREAD_KEY, "comment-" + picture.getComment_ID());
+
+        if (picture.getPics()[0].endsWith(".gif")) {
+            intent.putExtra(BaseActivity.DATA_IS_NEED_WEBVIEW, true);
+        }
+
+        context.startActivity(intent);
+    }
 }

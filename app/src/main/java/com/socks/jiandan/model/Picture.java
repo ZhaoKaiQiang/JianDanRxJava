@@ -7,9 +7,8 @@ public class Picture implements Serializable {
     public static final String URL_BORING_PICTURE = "http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_pic_comments&page=";
     public static final String URL_SISTER = "http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_ooxx_comments&page=";
 
-    public enum PictureType {
-        BoringPicture, Sister
-    }
+    public static final int BoringPicture = 1;
+    public static final int Sister = 2;
 
     private String comment_ID;
     private String comment_author;
@@ -24,7 +23,7 @@ public class Picture implements Serializable {
     public Picture() {
     }
 
-    public static String getRequestUrl(PictureType type, int page) {
+    public static String getRequestUrl(int type, int page) {
 
         switch (type) {
             case BoringPicture:

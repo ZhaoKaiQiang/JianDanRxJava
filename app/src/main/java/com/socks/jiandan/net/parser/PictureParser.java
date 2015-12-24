@@ -34,4 +34,6 @@ public class PictureParser extends OkBaseParser<ArrayList<Picture>> {
             return null;
         }
     }
+
+
 }

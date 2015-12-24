@@ -2,12 +2,16 @@ package com.socks.jiandan.net;
 
 import com.socks.jiandan.callback.LoadFinishCallBack;
 import com.socks.jiandan.model.Comment4FreshNews;
+import com.socks.jiandan.model.CommentNumber;
 import com.socks.jiandan.model.Commentator;
 import com.socks.jiandan.model.FreshNews;
+import com.socks.jiandan.model.Picture;
+import com.socks.jiandan.net.parser.CommentCountsParser;
 import com.socks.jiandan.net.parser.CommentListParser;
 import com.socks.jiandan.net.parser.FreshNewsCommentParser;
 import com.socks.jiandan.net.parser.FreshNewsDetailParser;
 import com.socks.jiandan.net.parser.FreshNewsParser;
+import com.socks.jiandan.net.parser.PictureParser;
 import com.socks.jiandan.net.parser.Push4FreshCommentParser;
 import com.socks.jiandan.net.parser.PushCommentParser;
 import com.socks.okhttp.plus.OkHttpProxy;
@@ -25,6 +29,41 @@ import rx.schedulers.Schedulers;
  * Created by zhaokaiqiang on 15/12/23.
  */
 public class JDApi {
+
+
+    public static Observable<ArrayList<CommentNumber>> getCommentNumber(String comments) {
+
+        return Observable.create(new Observable.OnSubscribe<ArrayList<CommentNumber>>() {
+            @Override
+            public void call(Subscriber<? super ArrayList<CommentNumber>> subscriber) {
+                String url = CommentNumber.getCommentCountsURL(comments);
+                try {
+                    subscriber.onNext(new CommentCountsParser().parse(OkHttpProxy.get().url(url).execute()));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    subscriber.onError(e);
+                }
+            }
+        }).compose(applySchedulers());
+    }
+
+
+    public static Observable<ArrayList<Picture>> getPictures(int type, int page) {
+
+        return Observable.create(new Observable.OnSubscribe<ArrayList<Picture>>() {
+            @Override
+            public void call(Subscriber<? super ArrayList<Picture>> subscriber) {
+                String url = Picture.getRequestUrl(type, page);
+                try {
+                    subscriber.onNext(new PictureParser().parse(OkHttpProxy.get().url(url).execute()));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    subscriber.onError(e);
+                }
+            }
+        }).compose(applySchedulers());
+    }
+
 
     public static Observable<Boolean> pushComment4DuoShuo(Map<String, String> params) {
 

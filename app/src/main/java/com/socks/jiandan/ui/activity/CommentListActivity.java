@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import com.socks.jiandan.R;
 import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.callback.LoadResultCallBack;
-import com.socks.jiandan.ui.adapter.CommentAdapter;
+import com.socks.jiandan.adapter.CommentAdapter;
 import com.socks.jiandan.utils.ToastHelper;
 import com.victor.loading.rotate.RotateLoading;
 

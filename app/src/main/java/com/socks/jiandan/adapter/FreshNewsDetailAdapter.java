@@ -1,4 +1,4 @@
-package com.socks.jiandan.ui.adapter;
+package com.socks.jiandan.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

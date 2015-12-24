@@ -15,7 +15,7 @@ import com.socks.jiandan.R;
 import com.socks.jiandan.base.BaseFragment;
 import com.socks.jiandan.base.ConstantString;
 import com.socks.jiandan.presenter.FreshNewsListPresenter;
-import com.socks.jiandan.ui.adapter.FreshNewsAdapter;
+import com.socks.jiandan.adapter.FreshNewsAdapter;
 import com.socks.jiandan.ui.viewInterface.IFreshNewsList;
 import com.socks.jiandan.utils.ToastHelper;
 import com.socks.jiandan.view.AutoLoadRecyclerView;

@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import com.socks.jiandan.R;
 import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.model.FreshNews;
-import com.socks.jiandan.ui.adapter.FreshNewsDetailAdapter;
+import com.socks.jiandan.adapter.FreshNewsDetailAdapter;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.socks.jiandan.ui.adapter;
+package com.socks.jiandan.adapter;
 
 import android.app.Activity;
 import android.content.ClipData;
