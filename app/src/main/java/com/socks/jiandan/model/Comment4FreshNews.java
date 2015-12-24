@@ -6,7 +6,9 @@ import com.socks.jiandan.view.floorview.Commentable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 public class Comment4FreshNews extends Commentator implements Comparable, Commentable {
@@ -115,6 +117,38 @@ public class Comment4FreshNews extends Commentator implements Comparable, Commen
         } catch (ParseException e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    public static void generateCommentator(ArrayList<Comment4FreshNews> commentFrom,ArrayList<Comment4FreshNews> commentTo) {
+        commentTo.clear();
+
+        //如果评论条数大于6，就选择positive前6作为热门评论
+        if (commentFrom.size() > 6) {
+            Comment4FreshNews comment4FreshNews = new Comment4FreshNews();
+            comment4FreshNews.setType(Comment4FreshNews.TYPE_HOT);
+            commentTo.add(comment4FreshNews);
+
+            Collections.sort(commentFrom, (lhs, rhs) -> lhs.getVote_positive() <= rhs.getVote_positive() ? 1 :
+                    -1);
+            List<Comment4FreshNews> subComments = commentFrom.subList(0, 6);
+
+            for (Comment4FreshNews subComment : subComments) {
+                subComment.setTag(Comment4FreshNews.TAG_HOT);
+            }
+            commentTo.addAll(subComments);
+        }
+
+        Comment4FreshNews comment4FreshNews = new Comment4FreshNews();
+        comment4FreshNews.setType(Comment4FreshNews.TYPE_NEW);
+        commentTo.add(comment4FreshNews);
+
+        Collections.sort(commentFrom);
+
+        for (Comment4FreshNews comment4Normal : commentFrom) {
+            if (comment4Normal.getTag().equals(Comment4FreshNews.TAG_NORMAL)) {
+                commentTo.add(comment4Normal);
+            }
         }
     }
 

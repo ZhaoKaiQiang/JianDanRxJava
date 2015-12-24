@@ -15,6 +15,7 @@ import com.socks.jiandan.R;
 import com.socks.jiandan.base.BaseFragment;
 import com.socks.jiandan.model.FreshNews;
 import com.socks.jiandan.net.JDApi;
+import com.socks.jiandan.utils.IntentHelper;
 import com.socks.jiandan.utils.ShareUtil;
 import com.socks.jiandan.utils.TextUtil;
 import com.victor.loading.rotate.RotateLoading;
@@ -103,19 +104,14 @@ public class FreshNewsDetailFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.action_comment:
-//                Intent intent = new Intent(getActivity(), CommentListActivity.class);
-//                intent.putExtra(DATA_THREAD_ID, freshNews.getId());
-//                intent.putExtra(DATA_IS_FROM_FRESH_NEWS, true);
-//                startActivity(intent);
+                IntentHelper.toCommentListActivity(mContext, freshNews.id);
                 return true;
             case R.id.action_share:
                 ShareUtil.shareText(getActivity(), freshNews.title + " " + freshNews.url);
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

@@ -36,6 +36,13 @@
             android:name="com.socks.jiandan.receiver.NetStateReceiver"
             android:enabled="true"
             android:exported="true" />
+        <activity
+            android:name="com.socks.jiandan.ui.activity.CommentListActivity"
+            android:label="@string/title_activity_comment_list"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.socks.jiandan.ui.activity.PushCommentActivity"
+            android:label="@string/title_activity_push_comment" />
     </application>
 
 </manifest>

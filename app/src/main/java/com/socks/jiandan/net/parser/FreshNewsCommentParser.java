@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.reflect.TypeToken;
 import com.socks.jiandan.callback.LoadFinishCallBack;
 import com.socks.jiandan.model.Comment4FreshNews;
-import com.socks.jiandan.utils.JSONParser;
+import com.socks.jiandan.utils.GsonHelper;
 import com.socks.okhttp.plus.parser.OkBaseParser;
 import com.squareup.okhttp.Response;
 
@@ -45,7 +45,7 @@ public class FreshNewsCommentParser extends OkBaseParser<ArrayList<Comment4Fresh
                 int id = resultObj.optJSONObject("post").optInt("id");
                 mCallBack.loadFinish(Integer.toString(id));
 
-                ArrayList<Comment4FreshNews> comment4FreshNewses = (ArrayList<Comment4FreshNews>) JSONParser.toObject(commentsStr,
+                ArrayList<Comment4FreshNews> comment4FreshNewses = (ArrayList<Comment4FreshNews>) GsonHelper.toObject(commentsStr,
                         new TypeToken<ArrayList<Comment4FreshNews>>() {
                         }.getType());
 

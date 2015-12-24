@@ -40,6 +40,7 @@ dependencies {
 
     compile "io.reactivex:rxjava:1.1.0"
     compile "io.reactivex:rxandroid:1.1.0"
+    compile 'com.jakewharton.rxbinding:rxbinding:0.3.0'
 
     compile 'com.victor:lib:1.0.1'
     compile 'de.greenrobot:eventbus:2.4.0'

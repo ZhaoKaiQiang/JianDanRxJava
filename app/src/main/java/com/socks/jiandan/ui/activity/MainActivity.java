@@ -152,7 +152,6 @@ public class MainActivity extends BaseActivity implements IMainView {
         return super.onKeyDown(keyCode, event);
     }
 
-
     @Override
     public void closeDrawer() {
         mDrawerLayout.closeDrawers();

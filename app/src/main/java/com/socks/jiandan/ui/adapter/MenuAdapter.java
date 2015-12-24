@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.socks.jiandan.R;
 import com.socks.jiandan.model.MenuItem;
-import com.socks.jiandan.ui.activity.MainActivity;
+import com.socks.jiandan.ui.viewInterface.IMainView;
 
 import java.util.ArrayList;
 
@@ -25,14 +25,14 @@ import butterknife.ButterKnife;
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuHolder> {
 
     public ArrayList<MenuItem> menuItems;
-    private MainActivity mainActivity;
+    private IMainView mainView;
     private MenuItem.FragmentType currentFragment;
 
     public MenuAdapter(Activity activity) {
         menuItems = new ArrayList<>();
         currentFragment = MenuItem.FragmentType.FreshNews;
-        if (activity instanceof MainActivity) {
-            mainActivity = (MainActivity) activity;
+        if (activity instanceof IMainView) {
+            mainView = (IMainView) activity;
         } else {
             throw new IllegalArgumentException("The activity must be a MainActivity !");
         }
@@ -50,21 +50,18 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuHolder> {
 
         holder.tv_title.setText(menuItem.getTitle());
         holder.img_menu.setImageResource(menuItem.getResourceId());
-        holder.rl_container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (currentFragment != menuItem.getType()) {
-                        Fragment fragment = (Fragment) Class.forName(menuItem.getFragment()
-                                .getName()).newInstance();
-                        mainActivity.replaceFragment(R.id.frame_container, fragment);
-                        currentFragment = menuItem.getType();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+        holder.rl_container.setOnClickListener(v -> {
+            try {
+                if (currentFragment != menuItem.getType()) {
+                    Fragment fragment = (Fragment) Class.forName(menuItem.getFragment()
+                            .getName()).newInstance();
+                    mainView.replaceFragment(R.id.frame_container, fragment);
+                    currentFragment = menuItem.getType();
                 }
-                mainActivity.closeDrawer();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            mainView.closeDrawer();
         });
     }
 

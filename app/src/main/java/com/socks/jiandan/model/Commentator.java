@@ -4,6 +4,8 @@ import com.socks.jiandan.view.floorview.Commentable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -80,6 +82,40 @@ public class Commentator implements Comparable, Commentable {
         } catch (ParseException e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    public static void generateCommentator(ArrayList<Commentator> commentators1) {
+        commentators1.clear();
+
+        ArrayList<Commentator> hotCommentator = new ArrayList<>();
+        ArrayList<Commentator> normalComment = new ArrayList<>();
+
+        //添加热门评论
+        for (Commentator commentator : commentators1) {
+            if (commentator.getTag().equals(Commentator.TAG_HOT)) {
+                hotCommentator.add(commentator);
+            } else {
+                normalComment.add(commentator);
+            }
+        }
+
+        //添加热门评论标签
+        if (hotCommentator.size() != 0) {
+            Collections.sort(hotCommentator);
+            Commentator hotCommentFlag = new Commentator();
+            hotCommentFlag.setType(Commentator.TYPE_HOT);
+            hotCommentator.add(0, hotCommentFlag);
+            commentators1.addAll(hotCommentator);
+        }
+
+        //添加最新评论及标签
+        if (normalComment.size() != 0) {
+            Commentator newCommentFlag = new Commentator();
+            newCommentFlag.setType(Commentator.TYPE_NEW);
+            commentators1.add(newCommentFlag);
+            Collections.sort(normalComment);
+            commentators1.addAll(normalComment);
         }
     }
 
