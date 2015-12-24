@@ -37,7 +37,7 @@ import butterknife.ButterKnife;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
-    private ArrayList<Commentator> commentators;
+    private ArrayList<Commentator> mCommentators;
     private ArrayList<Comment4FreshNews> commentators4FreshNews;
 
     private Activity mActivity;
@@ -54,7 +54,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         if (isFromFreshNews) {
             commentators4FreshNews = new ArrayList<>();
         } else {
-            commentators = new ArrayList<>();
+            mCommentators = new ArrayList<>();
         }
     }
 
@@ -81,7 +81,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         if (isFromFreshNews) {
             commentator = commentators4FreshNews.get(position);
         } else {
-            commentator = commentators.get(position);
+            commentator = mCommentators.get(position);
         }
 
         switch (commentator.getType()) {
@@ -161,7 +161,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
         List<String> parentIds = Arrays.asList(commentator.getParents());
         ArrayList<Commentator> commentators = new ArrayList<>();
-        for (Commentator comm : this.commentators) {
+        for (Commentator comm : this.mCommentators) {
             if (parentIds.contains(comm.getPost_id())) {
                 commentators.add(comm);
             }
@@ -175,7 +175,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         if (isFromFreshNews) {
             return commentators4FreshNews.size();
         } else {
-            return commentators.size();
+            return mCommentators.size();
         }
     }
 
@@ -184,7 +184,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         if (isFromFreshNews) {
             return commentators4FreshNews.get(position).getType();
         } else {
-            return commentators.get(position).getType();
+            return mCommentators.get(position).getType();
         }
     }
 
@@ -193,7 +193,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             if (commentators1.size() == 0) {
                 mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_NONE, null);
             } else {
-                Commentator.generateCommentator(commentators1);
+                mCommentators.clear();
+                Commentator.generateCommentator(commentators1,mCommentators);
                 notifyDataSetChanged();
                 mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
             }
@@ -207,7 +208,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             if (comment4FreshNewses.size() == 0) {
                 mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_NONE, null);
             } else {
-                Comment4FreshNews.generateCommentator(comment4FreshNewses, commentators4FreshNews);
+                Comment4FreshNews.generateComment(comment4FreshNewses, commentators4FreshNews);
                 notifyDataSetChanged();
                 mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
             }

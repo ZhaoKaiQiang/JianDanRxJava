@@ -85,14 +85,12 @@ public class Commentator implements Comparable, Commentable {
         }
     }
 
-    public static void generateCommentator(ArrayList<Commentator> commentators1) {
-        commentators1.clear();
-
+    public static void generateCommentator(ArrayList<Commentator> response, ArrayList<Commentator> mCommentators) {
         ArrayList<Commentator> hotCommentator = new ArrayList<>();
         ArrayList<Commentator> normalComment = new ArrayList<>();
 
         //添加热门评论
-        for (Commentator commentator : commentators1) {
+        for (Commentator commentator : response) {
             if (commentator.getTag().equals(Commentator.TAG_HOT)) {
                 hotCommentator.add(commentator);
             } else {
@@ -106,16 +104,16 @@ public class Commentator implements Comparable, Commentable {
             Commentator hotCommentFlag = new Commentator();
             hotCommentFlag.setType(Commentator.TYPE_HOT);
             hotCommentator.add(0, hotCommentFlag);
-            commentators1.addAll(hotCommentator);
+            mCommentators.addAll(hotCommentator);
         }
 
         //添加最新评论及标签
         if (normalComment.size() != 0) {
             Commentator newCommentFlag = new Commentator();
             newCommentFlag.setType(Commentator.TYPE_NEW);
-            commentators1.add(newCommentFlag);
+            mCommentators.add(newCommentFlag);
             Collections.sort(normalComment);
-            commentators1.addAll(normalComment);
+            mCommentators.addAll(normalComment);
         }
     }
 

@@ -88,8 +88,8 @@ public class MainMenuFragment extends BaseFragment {
                 PictureFragment.class));
 //        mAdapter.menuItems.add(new MenuItem("妹子图", R.drawable.ic_local_florist_white_24dp, MenuItem.FragmentType.Sister,
 //                SisterFragment.class));
-//        mAdapter.menuItems.add(new MenuItem("段子", R.drawable.ic_chat_white_24dp, MenuItem.FragmentType.Joke, JokeFragment
-//                .class));
+        mAdapter.menuItems.add(new MenuItem("段子", R.drawable.ic_chat_white_24dp, MenuItem.FragmentType.Joke, JokeFragment
+                .class));
 //        mAdapter.menuItems.add(new MenuItem("小电影", R.drawable.ic_movie_white_24dp, MenuItem.FragmentType.Video,
 //                VideoFragment.class));
     }
@@ -100,8 +100,8 @@ public class MainMenuFragment extends BaseFragment {
                 FreshNewsFragment.class));
         mAdapter.menuItems.add(new MenuItem("无聊图", R.drawable.ic_mood_white_24dp, MenuItem.FragmentType.BoringPicture,
                 PictureFragment.class));
-//        mAdapter.menuItems.add(new MenuItem("段子", R.drawable.ic_chat_white_24dp, MenuItem.FragmentType.Joke, JokeFragment
-//                .class));
+        mAdapter.menuItems.add(new MenuItem("段子", R.drawable.ic_chat_white_24dp, MenuItem.FragmentType.Joke, JokeFragment
+                .class));
 //        mAdapter.menuItems.add(new MenuItem("小电影", R.drawable.ic_movie_white_24dp, MenuItem.FragmentType.Video,
 //                VideoFragment.class));
     }

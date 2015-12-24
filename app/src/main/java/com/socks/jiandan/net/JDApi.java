@@ -5,12 +5,14 @@ import com.socks.jiandan.model.Comment4FreshNews;
 import com.socks.jiandan.model.CommentNumber;
 import com.socks.jiandan.model.Commentator;
 import com.socks.jiandan.model.FreshNews;
+import com.socks.jiandan.model.Joke;
 import com.socks.jiandan.model.Picture;
 import com.socks.jiandan.net.parser.CommentCountsParser;
 import com.socks.jiandan.net.parser.CommentListParser;
 import com.socks.jiandan.net.parser.FreshNewsCommentParser;
 import com.socks.jiandan.net.parser.FreshNewsDetailParser;
 import com.socks.jiandan.net.parser.FreshNewsParser;
+import com.socks.jiandan.net.parser.JokeParser;
 import com.socks.jiandan.net.parser.PictureParser;
 import com.socks.jiandan.net.parser.Push4FreshCommentParser;
 import com.socks.jiandan.net.parser.PushCommentParser;
@@ -29,6 +31,21 @@ import rx.schedulers.Schedulers;
  * Created by zhaokaiqiang on 15/12/23.
  */
 public class JDApi {
+
+    public static Observable<ArrayList<Joke>> getJokes(int page) {
+        return Observable.create(new Observable.OnSubscribe<ArrayList<Joke>>() {
+            @Override
+            public void call(Subscriber<? super ArrayList<Joke>> subscriber) {
+                try {
+                    subscriber.onNext(new JokeParser().parse(OkHttpProxy.get().url(Joke.getRequestUrl(page)).execute()));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        }).compose(applySchedulers());
+    }
 
 
     public static Observable<ArrayList<CommentNumber>> getCommentNumber(String comments) {

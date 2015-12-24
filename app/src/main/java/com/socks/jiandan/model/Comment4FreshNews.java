@@ -120,7 +120,7 @@ public class Comment4FreshNews extends Commentator implements Comparable, Commen
         }
     }
 
-    public static void generateCommentator(ArrayList<Comment4FreshNews> commentFrom,ArrayList<Comment4FreshNews> commentTo) {
+    public static void generateComment(ArrayList<Comment4FreshNews> commentFrom,ArrayList<Comment4FreshNews> commentTo) {
         commentTo.clear();
 
         //如果评论条数大于6，就选择positive前6作为热门评论
