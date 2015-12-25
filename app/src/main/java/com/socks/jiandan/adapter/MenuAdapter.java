@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.socks.jiandan.R;
 import com.socks.jiandan.model.MenuItem;
-import com.socks.jiandan.ui.viewInterface.IMainView;
+import com.socks.jiandan.viewInterface.IMainView;
 
 import java.util.ArrayList;
 

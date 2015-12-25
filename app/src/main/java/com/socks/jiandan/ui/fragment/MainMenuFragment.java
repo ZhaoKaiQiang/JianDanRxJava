@@ -3,6 +3,7 @@ package com.socks.jiandan.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,12 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.socks.jiandan.R;
+import com.socks.jiandan.adapter.MenuAdapter;
 import com.socks.jiandan.base.BaseFragment;
 import com.socks.jiandan.model.MenuItem;
 import com.socks.jiandan.ui.activity.SettingActivity;
-import com.socks.jiandan.adapter.MenuAdapter;
-import com.socks.jiandan.ui.viewInterface.IMainView;
-import com.socks.jiandan.utils.SPHelper;
+import com.socks.jiandan.viewInterface.IMainView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -68,12 +68,13 @@ public class MainMenuFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        boolean showSister = SPHelper.getBoolean(SettingFragment.ENABLE_SISTER, false);
+        boolean showSister = PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(SettingFragment.ENABLE_SISTER, false);
 
         if (showSister && mAdapter.menuItems.size() == 4) {
             addAllMenuItems(mAdapter);
             mAdapter.notifyDataSetChanged();
-        } else if (!showSister && mAdapter.menuItems.size() == 5) {
+        } else if (!showSister && mAdapter.menuItems.size()
+                == 5) {
             addMenuItemsNoSister(mAdapter);
             mAdapter.notifyDataSetChanged();
         }
@@ -86,12 +87,12 @@ public class MainMenuFragment extends BaseFragment {
                 FreshNewsFragment.class));
         mAdapter.menuItems.add(new MenuItem("无聊图", R.drawable.ic_mood_white_24dp, MenuItem.FragmentType.BoringPicture,
                 PictureFragment.class));
-//        mAdapter.menuItems.add(new MenuItem("妹子图", R.drawable.ic_local_florist_white_24dp, MenuItem.FragmentType.Sister,
-//                SisterFragment.class));
+        mAdapter.menuItems.add(new MenuItem("妹子图", R.drawable.ic_local_florist_white_24dp, MenuItem.FragmentType.Sister,
+                SisterFragment.class));
         mAdapter.menuItems.add(new MenuItem("段子", R.drawable.ic_chat_white_24dp, MenuItem.FragmentType.Joke, JokeFragment
                 .class));
-//        mAdapter.menuItems.add(new MenuItem("小电影", R.drawable.ic_movie_white_24dp, MenuItem.FragmentType.Video,
-//                VideoFragment.class));
+        mAdapter.menuItems.add(new MenuItem("小电影", R.drawable.ic_movie_white_24dp, MenuItem.FragmentType.Video,
+                VideoFragment.class));
     }
 
     private void addMenuItemsNoSister(MenuAdapter mAdapter) {
@@ -102,8 +103,8 @@ public class MainMenuFragment extends BaseFragment {
                 PictureFragment.class));
         mAdapter.menuItems.add(new MenuItem("段子", R.drawable.ic_chat_white_24dp, MenuItem.FragmentType.Joke, JokeFragment
                 .class));
-//        mAdapter.menuItems.add(new MenuItem("小电影", R.drawable.ic_movie_white_24dp, MenuItem.FragmentType.Video,
-//                VideoFragment.class));
+        mAdapter.menuItems.add(new MenuItem("小电影", R.drawable.ic_movie_white_24dp, MenuItem.FragmentType.Video,
+                VideoFragment.class));
     }
 
 }

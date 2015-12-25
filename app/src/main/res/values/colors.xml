@@ -11,5 +11,5 @@
 
     <color name="comment_bg">#FFFFFF</color>
     <color name="actionbar_title">#FFFFFF</color>
-
+    <color name="secondary_text_default">#8a000000</color>
 </resources>

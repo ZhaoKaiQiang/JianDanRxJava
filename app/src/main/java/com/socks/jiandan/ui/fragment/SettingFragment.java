@@ -49,20 +49,14 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         clearCache.setSummary("缓存大小：" + decimalFormat.format(FileUtil.getDirSize(cacheFile)) + "M");
 
-        enableSister.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                ToastHelper.Short(((Boolean) newValue) ? "已解锁隐藏属性->妹子图" : "已关闭隐藏属性->妹子图");
-                return true;
-            }
+        enableSister.setOnPreferenceChangeListener((preference, newValue) -> {
+            ToastHelper.Short(((Boolean) newValue) ? "已解锁隐藏属性->妹子图" : "已关闭隐藏属性->妹子图");
+            return true;
         });
 
-        enableBig.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                ToastHelper.Short(((Boolean) newValue) ? "已开启大图模式" : "已关闭大图模式");
-                return true;
-            }
+        enableBig.setOnPreferenceChangeListener((preference, newValue) -> {
+            ToastHelper.Short(((Boolean) newValue) ? "已开启大图模式" : "已关闭大图模式");
+            return true;
         });
 
         clearCache.setOnPreferenceClickListener(this);
@@ -92,31 +86,16 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
                     .positiveText("GitHub")
                     .negativeText("WeiBo")
                     .neutralText("CSDN")
-                    .callback(new MaterialDialog.ButtonCallback() {
-                        @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ZhaoKaiQiang/JianDan")));
-                            dialog.dismiss();
-                        }
-
-                        @Override
-                        public void onNegative(MaterialDialog dialog) {
-                            super.onNegative(dialog);
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://weibo.com/zhaokaiqiang1992")));
-                        }
-
-                        @Override
-                        public void onNeutral(MaterialDialog dialog) {
-                            super.onNeutral(dialog);
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://blog.csdn.net/zhaokaiqiang1992")));
-                        }
+                    .onPositive((dialog1, which) -> {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ZhaoKaiQiang/JianDan")));
+                        dialog1.dismiss();
                     })
+                    .onNegative((dialog1, which) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://weibo.com/zhaokaiqiang1992"))))
+                    .onNeutral((dialog1, which) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://weibo.com/zhaokaiqiang1992"))))
                     .build();
             dialog.show();
         }
         return true;
     }
-
 
 }

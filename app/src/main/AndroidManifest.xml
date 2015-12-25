@@ -42,6 +42,9 @@
             android:name="com.socks.jiandan.ui.activity.ImageDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ImageDetailActivityTheme" />
+        <activity
+            android:name="com.socks.jiandan.ui.activity.VideoDetailActivity"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name="com.socks.jiandan.receiver.NetStateReceiver"

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView android:id="@+id/card"
-                                    xmlns:android="http://schemas.android.com/apk/res/android"
-                                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_margin="2.0dip"
-                                    app:cardCornerRadius="2.0dip"
-                                    app:cardPreventCornerOverlap="true"
-                                    app:cardUseCompatPadding="true">
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="2.0dip"
+    app:cardCornerRadius="2.0dip"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,7 +20,7 @@
             android:layout_height="80dp"
             android:layout_alignParentTop="true"
             android:contentDescription="@null"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,7 +40,7 @@
                 android:maxLines="2"
                 android:minLines="2"
                 android:textColor="#ff000000"
-                android:textSize="13.0sp"/>
+                android:textSize="13.0sp" />
 
             <RelativeLayout
                 android:id="@+id/bottom"
@@ -68,9 +69,9 @@
                             android:paddingLeft="2.0dip"
                             android:paddingRight="2.0dip"
                             android:text="OO"
-                            android:textColor="@color/secondary_text_default_material_light"
+                            android:textColor="@color/secondary_text_default"
                             android:textSize="10.0sp"
-                            android:textStyle="normal"/>
+                            android:textStyle="normal" />
 
                         <TextView
                             android:id="@+id/tv_like"
@@ -80,8 +81,8 @@
                             android:minEms="1"
                             android:paddingLeft="2.0dip"
                             android:paddingRight="2.0dip"
-                            android:textColor="@color/secondary_text_default_material_light"
-                            android:textSize="10.0sp"/>
+                            android:textColor="@color/secondary_text_default"
+                            android:textSize="10.0sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -101,9 +102,9 @@
                             android:paddingLeft="2.0dip"
                             android:paddingRight="2.0dip"
                             android:text="XX"
-                            android:textColor="@color/secondary_text_default_material_light"
+                            android:textColor="@color/secondary_text_default"
                             android:textSize="10.0sp"
-                            android:textStyle="normal"/>
+                            android:textStyle="normal" />
 
                         <TextView
                             android:id="@+id/tv_unlike"
@@ -113,8 +114,8 @@
                             android:minEms="1"
                             android:paddingLeft="2.0dip"
                             android:paddingRight="2.0dip"
-                            android:textColor="@color/secondary_text_default_material_light"
-                            android:textSize="10.0sp"/>
+                            android:textColor="@color/secondary_text_default"
+                            android:textSize="10.0sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -133,8 +134,8 @@
                             android:paddingLeft="2.0dip"
                             android:paddingRight="2.0dip"
                             android:text="吐槽"
-                            android:textColor="@color/secondary_text_default_material_light"
-                            android:textSize="10.0sp"/>
+                            android:textColor="@color/secondary_text_default"
+                            android:textSize="10.0sp" />
 
                         <TextView
                             android:id="@+id/tv_comment_count"
@@ -145,8 +146,8 @@
                             android:paddingLeft="2.0dip"
                             android:paddingRight="2.0dip"
                             android:text=""
-                            android:textColor="@color/secondary_text_default_material_light"
-                            android:textSize="10.0sp"/>
+                            android:textColor="@color/secondary_text_default"
+                            android:textSize="10.0sp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -158,7 +159,7 @@
                     android:background="@null"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_more_horiz_grey600_24dp"
-                    android:visibility="visible"/>
+                    android:visibility="visible" />
             </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>

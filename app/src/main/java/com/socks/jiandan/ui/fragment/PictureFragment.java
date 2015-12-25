@@ -39,11 +39,11 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
     @Bind(R.id.loading)
     RotateLoading loading;
 
-    private PictureAdapter mAdapter;
-    private boolean isFirstChange;
+    protected int mType = Picture.BoringPicture;
+    private boolean isFirstChange = true;
     private long lastShowTime;
     private MediaScannerConnection connection;
-    protected int mType;
+    private PictureAdapter mAdapter;
 
     public PictureFragment() {
     }
@@ -52,8 +52,6 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        isFirstChange = true;
-        mType = Picture.BoringPicture;
     }
 
     @Override

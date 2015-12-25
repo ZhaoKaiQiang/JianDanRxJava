@@ -1,12 +1,10 @@
 package com.socks.jiandan.ui.activity;
 
-import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -16,7 +14,6 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.socks.jiandan.JDApplication;
 import com.socks.jiandan.R;
@@ -25,7 +22,7 @@ import com.socks.jiandan.model.NetWorkEvent;
 import com.socks.jiandan.receiver.NetStateReceiver;
 import com.socks.jiandan.ui.fragment.FreshNewsFragment;
 import com.socks.jiandan.ui.fragment.MainMenuFragment;
-import com.socks.jiandan.ui.viewInterface.IMainView;
+import com.socks.jiandan.viewInterface.IMainView;
 import com.socks.jiandan.utils.IntentHelper;
 import com.socks.jiandan.utils.ToastHelper;
 
@@ -44,7 +41,7 @@ public class MainActivity extends BaseActivity implements IMainView {
     DrawerLayout mDrawerLayout;
 
     private ActionBarDrawerToggle mActionBarDrawerToggle;
-    private BroadcastReceiver netStateReceiver;
+    private NetStateReceiver netStateReceiver;
     private MaterialDialog noNetWorkDialog;
     private long exitTime;
 
@@ -84,15 +81,15 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     @Override
     protected void loadData() {
+        netStateReceiver = new NetStateReceiver();
+        registerReceiver(netStateReceiver, new IntentFilter(
+                ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        netStateReceiver = new NetStateReceiver();
-        registerReceiver(netStateReceiver, new IntentFilter(
-                ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     @Override
@@ -107,7 +104,7 @@ public class MainActivity extends BaseActivity implements IMainView {
         unregisterReceiver(netStateReceiver);
     }
 
-    public void onEvent(NetWorkEvent event) {
+    public void onEventMainThread(NetWorkEvent event) {
 
         if (event.getType() == NetWorkEvent.UNAVAILABLE) {
             if (noNetWorkDialog == null) {
@@ -120,12 +117,7 @@ public class MainActivity extends BaseActivity implements IMainView {
                         .negativeColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
                         .titleColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
                         .negativeText(R.string.no).positiveText(R.string.yes)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                IntentHelper.toSettingActivity(mContext);
-                            }
-                        })
+                        .onPositive((dialog, which) -> IntentHelper.toSettingActivity(mContext))
                         .cancelable(false)
                         .build();
             }
