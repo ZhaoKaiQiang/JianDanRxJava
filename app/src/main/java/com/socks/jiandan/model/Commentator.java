@@ -1,5 +1,7 @@
 package com.socks.jiandan.model;
 
+import android.support.annotation.NonNull;
+
 import com.socks.jiandan.view.floorview.Commentable;
 
 import java.text.ParseException;
@@ -64,7 +66,7 @@ public class Commentator implements Comparable, Commentable {
     }
 
     @Override
-    public int compareTo(Object another) {
+    public int compareTo(@NonNull Object another) {
 
         String anotherTimeString = ((Commentator) another).getCreated_at().replace("T", " ");
         anotherTimeString = anotherTimeString.substring(0, anotherTimeString.indexOf("+"));

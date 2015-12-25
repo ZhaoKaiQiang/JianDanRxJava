@@ -143,7 +143,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     private void loadData() {
         JDApi.getVideos(page).subscribe(this::getCommentCounts, e -> {
-            mLoadFinisCallBack.loadFinish(null);
+            mLoadFinisCallBack.loadFinish(e);
         });
     }
 
@@ -184,7 +184,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 .subscribe(commentNumbers -> {
 
                     for (int i = 0; i < videos.size(); i++) {
-                        videos.get(i).setComment_count(commentNumbers.get(i).getComments() + "");
+                        videos.get(i).setComment_count(commentNumbers.get(i).comments + "");
                     }
 
                     mVideos.addAll(videos);
@@ -194,7 +194,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         loadNextPage();
                     }
                 }, e -> {
-                    mLoadFinisCallBack.loadFinish(null);
+                    mLoadFinisCallBack.loadFinish(e);
                     mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET);
                 });
     }

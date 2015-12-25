@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class CommentListParser extends OkBaseParser<ArrayList<Commentator>> {
 
-    private LoadFinishCallBack callBack;
+    private LoadFinishCallBack<String> mCallBack;
 
-    public CommentListParser(LoadFinishCallBack callBack) {
-        this.callBack = callBack;
+    public CommentListParser(LoadFinishCallBack<String> callBack) {
+        this.mCallBack = callBack;
     }
 
     @Nullable
@@ -42,7 +42,7 @@ public class CommentListParser extends OkBaseParser<ArrayList<Commentator>> {
                     ("]", "").replace("\"", "");
             String[] threadIds = allThreadId.split("\\,");
 
-            callBack.loadFinish(resultJson.optJSONObject("thread").optString("thread_id"));
+            mCallBack.loadFinish(resultJson.optJSONObject("thread").optString("thread_id"));
 
             if (TextUtils.isEmpty(threadIds[0])) {
                 return new ArrayList<>();

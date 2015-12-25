@@ -1,45 +1,44 @@
 package com.socks.jiandan.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import android.os.Build;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 
 /**
  * Created by zhaokaiqiang on 15/12/23.
  */
-public class GsonHelper {
+public class GsonHelper<T> {
 
-    private static Gson gson = new Gson();
+    public static Gson mGson;
 
-    public static String toString(Object obj) {
-        return gson.toJson(obj);
+    static {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            GsonBuilder gsonBuilder = new GsonBuilder()
+                    .excludeFieldsWithModifiers(
+                            Modifier.FINAL,
+                            Modifier.TRANSIENT,
+                            Modifier.STATIC);
+            mGson = gsonBuilder.create();
+        } else {
+            mGson = new Gson();
+        }
     }
 
-    public static Object toObject(String jsonString, Object type) {
-        jsonString = jsonString.replace("&nbsp", "");
-        jsonString = jsonString.replace("﹠nbsp", "");
-        jsonString = jsonString.replace("nbsp", "");
-        jsonString = jsonString.replace("&amp;", "");
-        jsonString = jsonString.replace("&amp", "");
-        jsonString = jsonString.replace("amp", "");
-        if (type instanceof Type) {
-            try {
-                return gson.fromJson(jsonString, (Type) type);
-            } catch (JsonSyntaxException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else if (type instanceof Class<?>) {
-            try {
-                return gson.fromJson(jsonString, (Class<?>) type);
-            } catch (JsonSyntaxException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else {
-            throw new RuntimeException("type only can be Class<?>or Type");
-        }
+
+    public static String toString(Object obj) {
+        return mGson.toJson(obj);
+    }
+
+    public T fromJson(String json, Class<T> classOfT) {
+        return mGson.fromJson(json, classOfT);
+    }
+
+    public T fromJson(String json, Type typeOfT) {
+        return mGson.fromJson(json, typeOfT);
     }
 
 }

@@ -180,7 +180,7 @@ public class ImageDetailActivity extends BaseActivity implements LoadFinishCallB
                 startActivity(intent);
                 break;
             case R.id.img_download:
-                FileUtil.savePicture(this, img_urls[0], this);
+                FileUtil.savePicture(img_urls[0], this);
                 break;
         }
     }

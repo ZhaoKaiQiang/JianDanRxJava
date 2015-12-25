@@ -167,4 +167,5 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
         connectionClient.setMediaScannerConnection(connection);
         connection.connect();
     }
+
 }

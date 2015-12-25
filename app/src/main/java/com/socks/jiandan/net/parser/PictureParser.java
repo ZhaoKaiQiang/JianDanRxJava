@@ -4,12 +4,13 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.reflect.TypeToken;
 import com.socks.jiandan.model.Picture;
-import com.socks.jiandan.utils.JSONParser;
+import com.socks.jiandan.utils.GsonHelper;
 import com.socks.okhttp.plus.parser.OkBaseParser;
 import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
@@ -26,14 +27,15 @@ public class PictureParser extends OkBaseParser<ArrayList<Picture>> {
         try {
             String jsonStr = response.body().string();
             jsonStr = new JSONObject(jsonStr).getJSONArray("comments").toString();
-            return (ArrayList<Picture>) JSONParser.toObject(jsonStr,
-                    new TypeToken<ArrayList<Picture>>() {
-                    }.getType());
+
+            Type type = new TypeToken<ArrayList<Picture>>() {
+            }.getType();
+
+            return new GsonHelper<ArrayList<Picture>>().fromJson(jsonStr, type);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
-
 
 }

@@ -168,7 +168,7 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
         JDApi.getCommentNumber(url)
                 .subscribe(commentNumbers -> {
                     for (int i = 0; i < jokes.size(); i++) {
-                        jokes.get(i).setComment_counts(commentNumbers.get(i).getComments() + "");
+                        jokes.get(i).setComment_counts(commentNumbers.get(i).comments + "");
                     }
                     if (page == 1) {
                         mJokes.clear();

@@ -1,6 +1,5 @@
 package com.socks.jiandan.utils;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -41,13 +40,7 @@ public class FileUtil {
         }
     }
 
-    /**
-     * 保存图片
-     *
-     * @param activity
-     * @param picUrl
-     */
-    public static void savePicture(Activity activity, String picUrl, LoadFinishCallBack loadFinishCallBack) {
+    public static void savePicture(String picUrl, LoadFinishCallBack<Bundle> loadFinishCallBack) {
 
         boolean isSmallPic = false;
         String[] urls = picUrl.split("\\.");
@@ -64,20 +57,19 @@ public class FileUtil {
         File picDir = new File(CacheUtil.getSaveDirPath());
 
         if (!picDir.exists()) {
-            picDir.mkdir();
+
+            if (picDir.mkdir()) {
+                final File newFile = new File(picDir, CacheUtil.getSavePicName(cacheFile, urls));
+                if (FileUtil.copyTo(cacheFile, newFile)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(BaseActivity.DATA_IS_SMALL_PIC, isSmallPic);
+                    bundle.putString(BaseActivity.DATA_FILE_PATH, newFile.getAbsolutePath());
+                    loadFinishCallBack.loadFinish(bundle);
+                } else {
+                    ToastHelper.Short(ConstantString.SAVE_FAILED);
+                }
+            }
         }
-
-        final File newFile = new File(picDir, CacheUtil.getSavePicName(cacheFile, urls));
-
-        if (FileUtil.copyTo(cacheFile, newFile)) {
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(BaseActivity.DATA_IS_SMALL_PIC, isSmallPic);
-            bundle.putString(BaseActivity.DATA_FILE_PATH, newFile.getAbsolutePath());
-            loadFinishCallBack.loadFinish(bundle);
-        } else {
-            ToastHelper.Short(ConstantString.SAVE_FAILED);
-        }
-
     }
 
     /**

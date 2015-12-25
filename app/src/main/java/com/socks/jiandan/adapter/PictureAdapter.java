@@ -162,7 +162,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
                                     .getPics()[0]);
                             break;
                         case 1:
-                            FileUtil.savePicture(mActivity, picture
+                            FileUtil.savePicture(picture
                                     .getPics()[0], mSaveFileCallBack);
                             break;
                     }
@@ -245,7 +245,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
                     mLoadFinisCallBack.loadFinish(null);
 
                     for (int i = 0; i < pictures.size(); i++) {
-                        pictures.get(i).setComment_counts(commentNumbers.get(i).getComments() + "");
+                        pictures.get(i).setComment_counts(commentNumbers.get(i).comments + "");
                     }
 
                     PictureAdapter.this.mPictures.addAll(pictures);

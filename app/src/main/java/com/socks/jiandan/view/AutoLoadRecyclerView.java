@@ -50,7 +50,7 @@ public class AutoLoadRecyclerView extends RecyclerView implements LoadFinishCall
     public void loadFinish(Object obj) {
         isLoadingMore = false;
     }
-
+    
     /**
      * 滑动自动加载监听器
      */

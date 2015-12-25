@@ -1,6 +1,7 @@
 package com.socks.jiandan.net.parser;
 
 import com.socks.jiandan.model.CommentNumber;
+import com.socks.jiandan.utils.GsonHelper;
 import com.socks.okhttp.plus.parser.OkBaseParser;
 import com.squareup.okhttp.Response;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
  * Created by zhaokaiqiang on 15/11/22.
  */
 public class CommentCountsParser extends OkBaseParser<ArrayList<CommentNumber>> {
+
     @Override
     public ArrayList<CommentNumber> parse(Response response) {
 
@@ -27,10 +29,8 @@ public class CommentCountsParser extends OkBaseParser<ArrayList<CommentNumber>> 
             for (String comment_ID : comment_IDs) {
                 if (!jsonObject.isNull(comment_ID)) {
                     JSONObject commentObject = jsonObject.getJSONObject(comment_ID);
-                    CommentNumber commentNumber = new CommentNumber();
-                    commentNumber.setComments(commentObject.optInt(CommentNumber.COMMENTS));
-                    commentNumber.setThread_id(commentObject.optString(CommentNumber.THREAD_ID));
-                    commentNumber.setThread_key(commentObject.optString(CommentNumber.THREAD_KEY));
+                    CommentNumber commentNumber = new GsonHelper<CommentNumber>()
+                            .fromJson(commentObject.toString(), CommentNumber.class);
                     commentNumbers.add(commentNumber);
                 } else {
                     //可能会出现没有对应id的数据的情况，为了保证条数一致，添加默认数据

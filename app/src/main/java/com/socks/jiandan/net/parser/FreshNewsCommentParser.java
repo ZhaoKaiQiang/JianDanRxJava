@@ -11,6 +11,7 @@ import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -21,10 +22,10 @@ import java.util.regex.Pattern;
  */
 public class FreshNewsCommentParser extends OkBaseParser<ArrayList<Comment4FreshNews>> {
 
-    private LoadFinishCallBack mCallBack;
+    private LoadFinishCallBack<String> mCallBack;
 
-    public FreshNewsCommentParser(LoadFinishCallBack mCallBack) {
-        this.mCallBack = mCallBack;
+    public FreshNewsCommentParser(LoadFinishCallBack<String> callBack) {
+        mCallBack = callBack;
     }
 
     @Nullable
@@ -45,9 +46,10 @@ public class FreshNewsCommentParser extends OkBaseParser<ArrayList<Comment4Fresh
                 int id = resultObj.optJSONObject("post").optInt("id");
                 mCallBack.loadFinish(Integer.toString(id));
 
-                ArrayList<Comment4FreshNews> comment4FreshNewses = (ArrayList<Comment4FreshNews>) GsonHelper.toObject(commentsStr,
-                        new TypeToken<ArrayList<Comment4FreshNews>>() {
-                        }.getType());
+                Type type = new TypeToken<ArrayList<Comment4FreshNews>>() {
+                }.getType();
+
+                ArrayList<Comment4FreshNews> comment4FreshNewses = new GsonHelper<ArrayList<Comment4FreshNews>>().fromJson(commentsStr, type);
 
                 Pattern pattern = Pattern.compile("\\d{7}");
 
