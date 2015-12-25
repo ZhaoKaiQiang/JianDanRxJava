@@ -6,10 +6,6 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- * 新鲜事
- * Created by zhaokaiqiang on 15/4/24.
- */
 public class FreshNews implements Serializable {
 
     public static final String URL_FRESH_NEWS = "http://jandan.net/?oxwlxojflwblxbsapi=get_recent_posts&include=url,date,tags,author,title,comment_count,custom_fields&custom_fields=thumb_c,views&dev=1&page=";

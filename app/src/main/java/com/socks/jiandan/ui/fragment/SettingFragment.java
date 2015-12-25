@@ -47,15 +47,15 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 
         File cacheFile = ImageLoader.getInstance().getDiskCache().getDirectory();
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-        clearCache.setSummary("缓存大小：" + decimalFormat.format(FileUtil.getDirSize(cacheFile)) + "M");
+        clearCache.setSummary(getString(R.string.cache_size) + decimalFormat.format(FileUtil.getDirSize(cacheFile)) + "M");
 
         enableSister.setOnPreferenceChangeListener((preference, newValue) -> {
-            ToastHelper.Short(((Boolean) newValue) ? "已解锁隐藏属性->妹子图" : "已关闭隐藏属性->妹子图");
+            ToastHelper.Short(((Boolean) newValue) ? getString(R.string.open_sister_mode) : getString(R.string.close_sister_mode));
             return true;
         });
 
         enableBig.setOnPreferenceChangeListener((preference, newValue) -> {
-            ToastHelper.Short(((Boolean) newValue) ? "已开启大图模式" : "已关闭大图模式");
+            ToastHelper.Short(((Boolean) newValue) ? getString(R.string.picture_mode_big) : getString(R.string.picture_mode_small));
             return true;
         });
 
@@ -70,19 +70,19 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 
         if (key.equals(CLEAR_CACHE)) {
             ImageLoader.getInstance().clearDiskCache();
-            ToastHelper.Short("清除缓存成功");
+            ToastHelper.Short(R.string.clear_cache);
             clearCache.setSummary("缓存大小：0.00M");
         } else if (key.equals(ABOUT_APP)) {
 
             MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                    .title("煎蛋开源版")
+                    .title(getString(R.string.app_name))
                     .backgroundColor(getResources().getColor(JDApplication.COLOR_OF_DIALOG))
                     .contentColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
                     .positiveColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
                     .negativeColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
                     .neutralColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
                     .titleColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
-                    .content("我是凯子哥，热爱分享，欢迎star ^_^")
+                    .content(R.string.person_info)
                     .positiveText("GitHub")
                     .negativeText("WeiBo")
                     .neutralText("CSDN")

@@ -19,5 +19,23 @@
     <string name="open_network">去开启网络?</string>
     <string name="yes">是</string>
     <string name="no">否</string>
+    <string name="hot_comment">热门评论</string>
+    <string name="new_comment">最新评论</string>
+    <string name="reply">回复</string>
+    <string name="reply_as_guess">作为游客留言</string>
+    <string name="confirm">确定</string>
+    <string name="reply_colon">回复:</string>
+    <string name="boring_picture">无聊图</string>
+    <string name="sister_picture">妹子图</string>
+    <string name="small_video">小电影</string>
+    <string name="load_mode_wifi">已切换为WIFI模式，自动加载GIF图片</string>
+    <string name="load_mode_3g">已切换为省流量模式，只加载GIF缩略图</string>
+    <string name="cache_size">缓存大小：</string>
+    <string name="clear_cache">清除缓存成功</string>
+    <string name="person_info">我是凯子哥，热爱分享，欢迎star ^_^</string>
+    <string name="picture_mode_big">已开启大图模式</string>
+    <string name="picture_mode_small">已关闭大图模式</string>
+    <string name="open_sister_mode"><![CDATA[已解锁隐藏属性->妹子图]]></string>
+    <string name="close_sister_mode"><![CDATA[已关闭隐藏属性->妹子图]]></string>
 
 </resources>

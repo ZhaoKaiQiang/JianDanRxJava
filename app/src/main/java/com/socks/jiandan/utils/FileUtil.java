@@ -71,7 +71,7 @@ public class FileUtil {
 
         if (FileUtil.copyTo(cacheFile, newFile)) {
             Bundle bundle = new Bundle();
-            bundle.putBoolean(BaseActivity.DATA_IS_SIAMLL_PIC, isSmallPic);
+            bundle.putBoolean(BaseActivity.DATA_IS_SMALL_PIC, isSmallPic);
             bundle.putString(BaseActivity.DATA_FILE_PATH, newFile.getAbsolutePath());
             loadFinishCallBack.loadFinish(bundle);
         } else {

@@ -1,7 +1,6 @@
 package com.socks.jiandan.base;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.v4.app.Fragment;
 
 import com.socks.jiandan.JDApplication;
@@ -13,9 +12,9 @@ public class BaseFragment extends Fragment implements ConstantString {
     protected Activity mContext;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mContext = (Activity) context;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mContext = activity;
     }
 
     @Override

@@ -73,7 +73,7 @@ public class ImageDetailActivity extends BaseActivity implements LoadFinishCallB
         Intent intent = getIntent();
         img_urls = intent.getStringArrayExtra(DATA_IMAGE_URL);
         threadKey = intent.getStringExtra(DATA_THREAD_KEY);
-        isNeedWebView = intent.getBooleanExtra(DATA_IS_NEED_WEBVIEW, false);
+        isNeedWebView = intent.getBooleanExtra(DATA_IS_NEED_WEB_VIEW, false);
 
         if (isNeedWebView) {
             webView.getSettings().setJavaScriptEnabled(true);
@@ -159,7 +159,7 @@ public class ImageDetailActivity extends BaseActivity implements LoadFinishCallB
     }
 
     @OnClick({R.id.img_back, R.id.img_share, R.id.tv_unlike, R.id.tv_like, R.id.img_comment, R.id.img_download})
-    public void onClick(View v) {
+    void click(View v) {
 
         switch (v.getId()) {
             case R.id.img_back:
@@ -169,10 +169,10 @@ public class ImageDetailActivity extends BaseActivity implements LoadFinishCallB
                 ShareUtil.sharePicture(this, img_urls[0]);
                 break;
             case R.id.tv_like:
-                ToastHelper.Short("别点了，这玩意不能用");
+                ToastHelper.Short(UN_CLICK);
                 break;
             case R.id.tv_unlike:
-                ToastHelper.Short("别点了，这玩意不能用");
+                ToastHelper.Short(UN_CLICK);
                 break;
             case R.id.img_comment:
                 Intent intent = new Intent(this, CommentListActivity.class);
@@ -221,39 +221,26 @@ public class ImageDetailActivity extends BaseActivity implements LoadFinishCallB
 
     @JavascriptInterface
     public void img_has_loaded() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-            }
+        runOnUiThread(() -> {
         });
     }
 
     @JavascriptInterface
     public void img_loaded_error() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ToastHelper.Short(ConstantString.LOAD_FAILED);
-            }
-        });
+        runOnUiThread(() -> ToastHelper.Short(ConstantString.LOAD_FAILED));
     }
 
     @JavascriptInterface
     public void onClick() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                toggleBar();
-            }
-        });
+        runOnUiThread(() -> toggleBar());
     }
 
     @Override
     public void loadFinish(Object obj) {
-        //下载完图片后，通知更新
         Bundle bundle = (Bundle) obj;
-        boolean isSmallPic = bundle.getBoolean(DATA_IS_SIAMLL_PIC);
+        boolean isSmallPic = bundle.getBoolean(DATA_IS_SMALL_PIC);
         String filePath = bundle.getString(DATA_FILE_PATH);
+        assert filePath != null;
         File newFile = new File(filePath);
         JDMediaScannerConnectionClient connectionClient = new JDMediaScannerConnectionClient(isSmallPic,
                 newFile);

@@ -18,6 +18,7 @@ public interface ConstantString {
     String LOAD_NO_NETWORK = "无网络，当前为缓存数据";
     String FORBID_COMMENTS = "禁止评论";
     String NO_COMMENTS = "暂无评论";
+    String UN_CLICK = "别点了，这玩意不能用";
 
     String DATA_FRESH_NEWS = "FreshNews";
     String DATA_POSITION = "position";
@@ -28,9 +29,9 @@ public interface ConstantString {
     String DATA_IMAGE_URL = "img_url";
     String DATA_IMAGE_ID = "img_id";
     String DATA_IMAGE_AUTHOR = "img_author";
-    String DATA_IS_NEED_WEBVIEW = "is_need_webview";
+    String DATA_IS_NEED_WEB_VIEW = "is_need_webview";
 
-    String DATA_IS_SIAMLL_PIC =  "isSmallPic";
+    String DATA_IS_SMALL_PIC =  "isSmallPic";
     String DATA_FILE_PATH =  "file_path";
 
 }

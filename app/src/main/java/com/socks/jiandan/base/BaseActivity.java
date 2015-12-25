@@ -13,11 +13,15 @@ import android.text.TextUtils;
 import com.socks.jiandan.JDApplication;
 import com.socks.jiandan.R;
 
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
+
 /**
  * Created by zhaokaiqiang on 15/12/22.
  */
-public abstract class BaseActivity extends AppCompatActivity implements ConstantString{
+public abstract class BaseActivity extends AppCompatActivity implements ConstantString {
 
+    private CompositeSubscription mCompositeSubscription;
     protected Context mContext;
 
     @Override
@@ -36,12 +40,32 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
     protected void onDestroy() {
         super.onDestroy();
         JDApplication.getRefWatcher(this).watch(this);
+        if (mCompositeSubscription != null) {
+            mCompositeSubscription.unsubscribe();
+        }
     }
 
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.anim_none, R.anim.trans_center_2_right);
+    }
+
+    public CompositeSubscription getCompositeSubscription() {
+        if (this.mCompositeSubscription == null) {
+            this.mCompositeSubscription = new CompositeSubscription();
+        }
+
+        return this.mCompositeSubscription;
+    }
+
+
+    public void addSubscription(Subscription s) {
+        if (this.mCompositeSubscription == null) {
+            this.mCompositeSubscription = new CompositeSubscription();
+        }
+
+        this.mCompositeSubscription.add(s);
     }
 
     ///////////////////////////////////////////////////////////////////////////

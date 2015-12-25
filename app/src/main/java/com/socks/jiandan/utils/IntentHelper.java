@@ -59,7 +59,7 @@ public class IntentHelper {
         intent.putExtra(BaseActivity.DATA_THREAD_KEY, "comment-" + picture.getComment_ID());
 
         if (picture.getPics()[0].endsWith(".gif")) {
-            intent.putExtra(BaseActivity.DATA_IS_NEED_WEBVIEW, true);
+            intent.putExtra(BaseActivity.DATA_IS_NEED_WEB_VIEW, true);
         }
 
         context.startActivity(intent);

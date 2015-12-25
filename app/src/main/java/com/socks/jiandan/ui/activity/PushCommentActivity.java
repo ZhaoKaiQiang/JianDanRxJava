@@ -58,14 +58,14 @@ public class PushCommentActivity extends BaseActivity {
         ButterKnife.bind(this);
         mToolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(mToolbar);
-        mToolbar.setTitle("回复");
+        mToolbar.setTitle(R.string.reply);
         mToolbar.setNavigationIcon(R.drawable.ic_actionbar_back);
     }
 
     @Override
     protected void loadData() {
         parent_name = getIntent().getStringExtra("parent_name");
-        tv_title.setText(TextUtil.isNull(parent_name) ? "回复:" : "回复:" + parent_name);
+        tv_title.setText(TextUtil.isNull(parent_name) ? getString(R.string.reply_colon) : getString(R.string.reply_colon) + parent_name);
         //新鲜事中 文章id=当前的thread_id=接口参数中的post_id
         thread_id = getIntent().getStringExtra("thread_id");
         parent_id = getIntent().getStringExtra("parent_id");
@@ -95,14 +95,14 @@ public class PushCommentActivity extends BaseActivity {
 
 
                 dialog = new MaterialDialog.Builder(this)
-                        .title("作为游客留言")
+                        .title(R.string.reply_as_guess)
                         .backgroundColor(getResources().getColor(JDApplication.COLOR_OF_DIALOG))
                         .contentColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
                         .positiveColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
                         .negativeColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
                         .titleColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
                         .customView(R.layout.dialog_commentotar_info, true)
-                        .positiveText("确定")
+                        .positiveText(R.string.confirm)
                         .negativeText(android.R.string.cancel)
                         .onPositive((dialog1, which) -> {
                             author_name = et_name.getText().toString();

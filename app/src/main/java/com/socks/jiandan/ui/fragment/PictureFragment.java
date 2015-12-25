@@ -96,13 +96,13 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
                 if (NetWorkUtil.isWifiConnected(getActivity())) {
                     mAdapter.setIsWifi(true);
                     if (!isFirstChange && (System.currentTimeMillis() - lastShowTime) > 3000) {
-                        ToastHelper.Short("已切换为WIFI模式，自动加载GIF图片");
+                        ToastHelper.Short(R.string.load_mode_wifi);
                         lastShowTime = System.currentTimeMillis();
                     }
                 } else {
                     mAdapter.setIsWifi(false);
                     if (!isFirstChange && (System.currentTimeMillis() - lastShowTime) > 3000) {
-                        ToastHelper.Short("已切换为省流量模式，只加载GIF缩略图");
+                        ToastHelper.Short(R.string.load_mode_3g);
                         lastShowTime = System.currentTimeMillis();
                     }
                 }
@@ -157,7 +157,7 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
     @Override
     public void loadFinish(Object obj) {
         Bundle bundle = (Bundle) obj;
-        boolean isSmallPic = bundle.getBoolean(DATA_IS_SIAMLL_PIC);
+        boolean isSmallPic = bundle.getBoolean(DATA_IS_SMALL_PIC);
         String filePath = bundle.getString(DATA_FILE_PATH);
         assert filePath != null;
         File newFile = new File(filePath);

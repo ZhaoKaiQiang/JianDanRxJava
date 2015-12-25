@@ -11,8 +11,12 @@ import com.socks.jiandan.utils.SPHelper;
 import com.socks.jiandan.utils.StrictModeUtil;
 import com.socks.jiandan.view.imageloader.ImageLoadProxy;
 import com.socks.library.KLog;
+import com.socks.okhttp.plus.OkHttpProxy;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.squareup.okhttp.OkHttpClient;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by zhaokaiqiang on 15/12/22.
@@ -32,13 +36,21 @@ public class JDApplication extends Application {
     public void onCreate() {
         StrictModeUtil.init();
         super.onCreate();
-        refWatcher = LeakCanary.install(this);
         mContext = this;
+
+        refWatcher = LeakCanary.install(this);
         ImageLoadProxy.initImageLoader(this);
+        initHttpClient();
         SPHelper.init(mContext);
-        if (BuildConfig.DEBUG) {
-            KLog.init(BuildConfig.DEBUG);
-        }
+        KLog.init(BuildConfig.DEBUG);
+    }
+
+    private void initHttpClient() {
+        OkHttpClient client = OkHttpProxy.getInstance();
+        client.setConnectTimeout(30, TimeUnit.SECONDS);
+        client.setWriteTimeout(30, TimeUnit.SECONDS);
+        client.setReadTimeout(30, TimeUnit.SECONDS);
+        client.setRetryOnConnectionFailure(true);
     }
 
     public static Context getContext() {

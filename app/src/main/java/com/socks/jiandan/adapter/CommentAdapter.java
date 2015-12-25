@@ -1,6 +1,5 @@
 package com.socks.jiandan.adapter;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.socks.jiandan.JDApplication;
 import com.socks.jiandan.R;
+import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.base.ConstantString;
 import com.socks.jiandan.callback.LoadResultCallBack;
 import com.socks.jiandan.model.Comment4FreshNews;
@@ -34,25 +34,26 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Subscription;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
     private ArrayList<Commentator> mCommentators;
-    private ArrayList<Comment4FreshNews> commentators4FreshNews;
+    private ArrayList<Comment4FreshNews> mCommentators4FreshNews;
 
-    private Activity mActivity;
-    private String thread_key;
+    private BaseActivity mActivity;
+    private String mThread_key;
     private String thread_id;
     private LoadResultCallBack mLoadResultCallBack;
-    private boolean isFromFreshNews;
+    private boolean mIsFromFreshNews;
 
-    public CommentAdapter(Activity activity, String thread_key, boolean isFromFreshNews, LoadResultCallBack loadResultCallBack) {
+    public CommentAdapter(BaseActivity activity, String thread_key, boolean isFromFreshNews, LoadResultCallBack loadResultCallBack) {
         mActivity = activity;
-        this.thread_key = thread_key;
-        this.isFromFreshNews = isFromFreshNews;
+        mThread_key = thread_key;
+        mIsFromFreshNews = isFromFreshNews;
         mLoadResultCallBack = loadResultCallBack;
-        if (isFromFreshNews) {
-            commentators4FreshNews = new ArrayList<>();
+        if (mIsFromFreshNews) {
+            mCommentators4FreshNews = new ArrayList<>();
         } else {
             mCommentators = new ArrayList<>();
         }
@@ -60,7 +61,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         switch (viewType) {
             case Commentator.TYPE_HOT:
             case Commentator.TYPE_NEW:
@@ -78,8 +78,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void onBindViewHolder(CommentViewHolder holder, int position) {
 
         Commentator commentator;
-        if (isFromFreshNews) {
-            commentator = commentators4FreshNews.get(position);
+        if (mIsFromFreshNews) {
+            commentator = mCommentators4FreshNews.get(position);
         } else {
             commentator = mCommentators.get(position);
         }
@@ -87,11 +87,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         switch (commentator.getType()) {
             case Commentator.TYPE_HOT:
                 assert holder.tv_flag != null;
-                holder.tv_flag.setText("热门评论");
+                holder.tv_flag.setText(R.string.hot_comment);
                 break;
             case Commentator.TYPE_NEW:
                 assert holder.tv_flag != null;
-                holder.tv_flag.setText("最新评论");
+                holder.tv_flag.setText(R.string.new_comment);
                 break;
             case Commentator.TYPE_NORMAL:
                 final Commentator comment = commentator;
@@ -118,7 +118,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                             }
                         }).show());
 
-                if (isFromFreshNews) {
+                if (mIsFromFreshNews) {
                     Comment4FreshNews commentators4FreshNews = (Comment4FreshNews) commentator;
                     holder.tv_content.setText(commentators4FreshNews.getCommentContent());
                     ImageLoadProxy.displayHeadIcon(commentators4FreshNews.getAvatar_url(), holder.img_header);
@@ -133,7 +133,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 assert holder.floors_parent != null;
                 if (commentator.getFloorNum() > 1) {
                     SubComments subComments;
-                    if (isFromFreshNews) {
+                    if (mIsFromFreshNews) {
                         subComments = new SubComments(addFloors4FreshNews((Comment4FreshNews) commentator));
                     } else {
                         subComments = new SubComments(addFloors(commentator));
@@ -161,7 +161,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
         List<String> parentIds = Arrays.asList(commentator.getParents());
         ArrayList<Commentator> commentators = new ArrayList<>();
-        for (Commentator comm : this.mCommentators) {
+        for (Commentator comm : mCommentators) {
             if (parentIds.contains(comm.getPost_id())) {
                 commentators.add(comm);
             }
@@ -172,8 +172,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public int getItemCount() {
-        if (isFromFreshNews) {
-            return commentators4FreshNews.size();
+        if (mIsFromFreshNews) {
+            return mCommentators4FreshNews.size();
         } else {
             return mCommentators.size();
         }
@@ -181,40 +181,44 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public int getItemViewType(int position) {
-        if (isFromFreshNews) {
-            return commentators4FreshNews.get(position).getType();
+        if (mIsFromFreshNews) {
+            return mCommentators4FreshNews.get(position).getType();
         } else {
             return mCommentators.get(position).getType();
         }
     }
 
     public void loadData() {
-        JDApi.getCommentator(thread_key, obj -> thread_id = (String) obj).subscribe(commentators1 -> {
-            if (commentators1.size() == 0) {
-                mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_NONE, null);
-            } else {
-                mCommentators.clear();
-                Commentator.generateCommentator(commentators1,mCommentators);
-                notifyDataSetChanged();
-                mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
-            }
-        }, e -> {
-            mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET);
-        });
+        Subscription subscriptions = JDApi.getCommentator(mThread_key, obj -> thread_id = (String) obj)
+                .subscribe(commentators1 -> {
+                    if (commentators1.size() == 0) {
+                        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_NONE, null);
+                    } else {
+                        mCommentators.clear();
+                        Commentator.generateCommentator(commentators1, mCommentators);
+                        notifyDataSetChanged();
+                        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
+                    }
+                }, e -> {
+                    mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET);
+                });
+        mActivity.addSubscription(subscriptions);
     }
 
     public void loadData4FreshNews() {
-        JDApi.getCommentator4FreshNews(thread_key, obj -> thread_id = (String) obj).subscribe(comment4FreshNewses -> {
-            if (comment4FreshNewses.size() == 0) {
-                mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_NONE, null);
-            } else {
-                Comment4FreshNews.generateComment(comment4FreshNewses, commentators4FreshNews);
-                notifyDataSetChanged();
-                mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
-            }
-        }, e -> {
-            mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET);
-        });
+        Subscription subscriptions = JDApi.getCommentator4FreshNews(mThread_key, obj -> thread_id = (String) obj)
+                .subscribe(comment4FreshNewses -> {
+                    if (comment4FreshNewses.size() == 0) {
+                        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_NONE, null);
+                    } else {
+                        Comment4FreshNews.generateComment(comment4FreshNewses, mCommentators4FreshNews);
+                        notifyDataSetChanged();
+                        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
+                    }
+                }, e -> {
+                    mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET);
+                });
+        mActivity.addSubscription(subscriptions);
     }
 
     public String getThreadId() {
