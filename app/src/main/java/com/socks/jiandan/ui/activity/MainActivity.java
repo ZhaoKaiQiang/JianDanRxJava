@@ -20,15 +20,17 @@ import com.socks.jiandan.R;
 import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.model.NetWorkEvent;
 import com.socks.jiandan.receiver.NetStateReceiver;
+import com.socks.jiandan.receiver.RxNetWorkEvent;
 import com.socks.jiandan.ui.fragment.FreshNewsFragment;
 import com.socks.jiandan.ui.fragment.MainMenuFragment;
-import com.socks.jiandan.viewInterface.IMainView;
 import com.socks.jiandan.utils.IntentHelper;
 import com.socks.jiandan.utils.ToastHelper;
+import com.socks.jiandan.viewInterface.IMainView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.greenrobot.event.EventBus;
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends BaseActivity implements IMainView {
 
@@ -41,6 +43,7 @@ public class MainActivity extends BaseActivity implements IMainView {
     DrawerLayout mDrawerLayout;
 
     private ActionBarDrawerToggle mActionBarDrawerToggle;
+    private CompositeSubscription mRxBusComposite;
     private NetStateReceiver netStateReceiver;
     private MaterialDialog noNetWorkDialog;
     private long exitTime;
@@ -84,48 +87,47 @@ public class MainActivity extends BaseActivity implements IMainView {
         netStateReceiver = new NetStateReceiver();
         registerReceiver(netStateReceiver, new IntentFilter(
                 ConnectivityManager.CONNECTIVITY_ACTION));
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        mRxBusComposite = new CompositeSubscription();
+        Subscription sub = RxNetWorkEvent.toObserverable().subscribe(netWorkEvent -> {
+            if (netWorkEvent.getType() == NetWorkEvent.UNAVAILABLE) {
+                if (noNetWorkDialog == null) {
+                    noNetWorkDialog = new MaterialDialog.Builder(MainActivity.this)
+                            .title(R.string.no_network)
+                            .content(R.string.open_network)
+                            .backgroundColor(getResources().getColor(JDApplication.COLOR_OF_DIALOG))
+                            .contentColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
+                            .positiveColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
+                            .negativeColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
+                            .titleColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
+                            .negativeText(R.string.no).positiveText(R.string.yes)
+                            .onPositive((dialog, which) -> IntentHelper.toSettingActivity(mContext))
+                            .cancelable(false)
+                            .build();
+                }
+                if (!noNetWorkDialog.isShowing()) {
+                    noNetWorkDialog.show();
+                }
+            }
+        });
+        mRxBusComposite.add(sub);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+        mRxBusComposite.unsubscribe();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(netStateReceiver);
-    }
-
-    public void onEventMainThread(NetWorkEvent event) {
-
-        if (event.getType() == NetWorkEvent.UNAVAILABLE) {
-            if (noNetWorkDialog == null) {
-                noNetWorkDialog = new MaterialDialog.Builder(MainActivity.this)
-                        .title(R.string.no_network)
-                        .content(R.string.open_network)
-                        .backgroundColor(getResources().getColor(JDApplication.COLOR_OF_DIALOG))
-                        .contentColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
-                        .positiveColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
-                        .negativeColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
-                        .titleColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
-                        .negativeText(R.string.no).positiveText(R.string.yes)
-                        .onPositive((dialog, which) -> IntentHelper.toSettingActivity(mContext))
-                        .cancelable(false)
-                        .build();
-            }
-            if (!noNetWorkDialog.isShowing()) {
-                noNetWorkDialog.show();
-            }
-        }
-
     }
 
     @Override

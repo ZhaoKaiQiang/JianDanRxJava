@@ -18,6 +18,7 @@ import com.socks.jiandan.callback.LoadFinishCallBack;
 import com.socks.jiandan.callback.LoadResultCallBack;
 import com.socks.jiandan.model.NetWorkEvent;
 import com.socks.jiandan.model.Picture;
+import com.socks.jiandan.receiver.RxNetWorkEvent;
 import com.socks.jiandan.utils.JDMediaScannerConnectionClient;
 import com.socks.jiandan.utils.NetWorkUtil;
 import com.socks.jiandan.utils.ToastHelper;
@@ -28,7 +29,8 @@ import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.greenrobot.event.EventBus;
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 
 public class PictureFragment extends BaseFragment implements LoadResultCallBack, LoadFinishCallBack {
 
@@ -41,6 +43,7 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
 
     protected int mType = Picture.BoringPicture;
     private boolean isFirstChange = true;
+    private CompositeSubscription mRxBusComposite;
     private long lastShowTime;
     private MediaScannerConnection connection;
     private PictureAdapter mAdapter;
@@ -52,12 +55,7 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
+        mRxBusComposite = new CompositeSubscription();
     }
 
     @Override
@@ -89,30 +87,36 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
         loading.start();
     }
 
-    public void onEventMainThread(NetWorkEvent event) {
+    @Override
+    public void onStart() {
+        super.onStart();
 
-        if (event.getType() == NetWorkEvent.AVAILABLE) {
-            if (NetWorkUtil.isWifiConnected(getActivity())) {
-                mAdapter.setIsWifi(true);
-                if (!isFirstChange && (System.currentTimeMillis() - lastShowTime) > 3000) {
-                    ToastHelper.Short("已切换为WIFI模式，自动加载GIF图片");
-                    lastShowTime = System.currentTimeMillis();
+        Subscription subscribe = RxNetWorkEvent.toObserverable().subscribe(netWorkEvent -> {
+            if (netWorkEvent.getType() == NetWorkEvent.AVAILABLE) {
+                if (NetWorkUtil.isWifiConnected(getActivity())) {
+                    mAdapter.setIsWifi(true);
+                    if (!isFirstChange && (System.currentTimeMillis() - lastShowTime) > 3000) {
+                        ToastHelper.Short("已切换为WIFI模式，自动加载GIF图片");
+                        lastShowTime = System.currentTimeMillis();
+                    }
+                } else {
+                    mAdapter.setIsWifi(false);
+                    if (!isFirstChange && (System.currentTimeMillis() - lastShowTime) > 3000) {
+                        ToastHelper.Short("已切换为省流量模式，只加载GIF缩略图");
+                        lastShowTime = System.currentTimeMillis();
+                    }
                 }
-            } else {
-                mAdapter.setIsWifi(false);
-                if (!isFirstChange && (System.currentTimeMillis() - lastShowTime) > 3000) {
-                    ToastHelper.Short("已切换为省流量模式，只加载GIF缩略图");
-                    lastShowTime = System.currentTimeMillis();
-                }
+                isFirstChange = false;
             }
-            isFirstChange = false;
-        }
+        });
+
+        mRxBusComposite.add(subscribe);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+        mRxBusComposite.unsubscribe();
     }
 
     @Override

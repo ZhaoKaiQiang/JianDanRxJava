@@ -43,7 +43,6 @@ dependencies {
     compile 'com.jakewharton.rxbinding:rxbinding:0.3.0'
 
     compile 'com.victor:lib:1.0.1'
-    compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.github.zhaokaiqiang.klog:library:1.3.0'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.github.zhaokaiqiang.okhttpplus:library:0.4.0'

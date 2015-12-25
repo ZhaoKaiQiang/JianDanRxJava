@@ -40,9 +40,11 @@ import com.socks.jiandan.view.ShowMaxImageView;
 import com.socks.jiandan.view.imageloader.ImageLoadProxy;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Observable;
 
 import static com.socks.jiandan.R.color.secondary_text_default_material_light;
 
@@ -94,7 +96,6 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
     public void onBindViewHolder(final PictureViewHolder holder, final int position) {
 
         final Picture picture = mPictures.get(position);
-
         String picUrl = picture.getPics()[0];
 
         if (picUrl.endsWith(".gif")) {
@@ -203,6 +204,9 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
 
     private void loadData() {
         JDApi.getPictures(mType, page)
+                .flatMap(Observable::from)
+                .filter(picture -> picture.getPics() != null)
+                .toList()
                 .doOnNext(pictures -> {
                     if (page == 1) {
                         PictureAdapter.this.mPictures.clear();
@@ -227,7 +231,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
         notifyDataSetChanged();
     }
 
-    private void getCommentCounts(final ArrayList<Picture> pictures) {
+    private void getCommentCounts(final List<Picture> pictures) {
 
         StringBuilder sb = new StringBuilder();
         for (Picture joke : pictures) {

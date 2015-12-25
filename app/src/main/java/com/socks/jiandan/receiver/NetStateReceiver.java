@@ -8,8 +8,6 @@ import android.net.ConnectivityManager;
 import com.socks.jiandan.model.NetWorkEvent;
 import com.socks.jiandan.utils.NetWorkUtil;
 
-import de.greenrobot.event.EventBus;
-
 public class NetStateReceiver extends BroadcastReceiver {
 
     @Override
@@ -17,9 +15,9 @@ public class NetStateReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(
                 ConnectivityManager.CONNECTIVITY_ACTION)) {
             if (NetWorkUtil.isNetWorkConnected(context)) {
-                EventBus.getDefault().post(new NetWorkEvent(NetWorkEvent.AVAILABLE));
+                RxNetWorkEvent.send(new NetWorkEvent(NetWorkEvent.AVAILABLE));
             } else {
-                EventBus.getDefault().post(new NetWorkEvent(NetWorkEvent.UNAVAILABLE));
+                RxNetWorkEvent.send(new NetWorkEvent(NetWorkEvent.UNAVAILABLE));
             }
         }
     }
