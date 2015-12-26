@@ -1,6 +1,5 @@
 package com.socks.jiandan.adapter;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -36,17 +35,21 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
 
     private int page;
     private ArrayList<Video> mVideos;
     private int lastPosition = -1;
-    private Activity mActivity;
+    private BaseActivity mActivity;
     private LoadResultCallBack mLoadResultCallBack;
-    private LoadFinishCallBack mLoadFinisCallBack;
+    private LoadFinishCallBack<Object> mLoadFinisCallBack;
 
-    public VideoAdapter(Activity activity, LoadResultCallBack loadResultCallBack, LoadFinishCallBack loadFinisCallBack) {
+    public VideoAdapter(BaseActivity activity, LoadResultCallBack loadResultCallBack, LoadFinishCallBack<Object> loadFinisCallBack) {
         mActivity = activity;
         mLoadFinisCallBack = loadFinisCallBack;
         mLoadResultCallBack = loadResultCallBack;
@@ -142,23 +145,31 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     }
 
     private void loadData() {
-        JDApi.getVideos(page).subscribe(this::getCommentCounts, e -> {
+        Subscription subscription = JDApi.getVideos(page).subscribe(this::getCommentCounts, e -> {
             mLoadFinisCallBack.loadFinish(e);
         });
+        mActivity.addSubscription(subscription);
+
     }
 
     private void loadCache() {
-
-        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
-        mLoadFinisCallBack.loadFinish(null);
-        VideoCache videoCacheUtil = VideoCache.getInstance(mActivity);
-        if (page == 1) {
-            mVideos.clear();
-            ToastHelper.Short(ConstantString.LOAD_NO_NETWORK);
-        }
-        mVideos.addAll(videoCacheUtil.getCacheByPage(page));
-        notifyDataSetChanged();
-
+        Subscription subscription = Observable.create((Observable.OnSubscribe<ArrayList<Video>>) subscriber -> {
+            subscriber.onNext(VideoCache.getInstance(mActivity).getCacheByPage(page));
+            subscriber.onCompleted();
+        }).compose(JDApi.applySchedulers())
+                .doOnNext(videos -> {
+                    if (page == 1) {
+                        mVideos.clear();
+                        ToastHelper.Short(ConstantString.LOAD_NO_NETWORK);
+                    }
+                })
+                .subscribe(videos -> {
+                    mVideos.addAll(videos);
+                    notifyDataSetChanged();
+                    mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
+                    mLoadFinisCallBack.loadFinish(null);
+                });
+        mActivity.addSubscription(subscription);
     }
 
     private void getCommentCounts(final ArrayList<Video> videos) {
@@ -168,19 +179,17 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             sb.append("comment-" + video.getComment_ID() + ",");
         }
 
-        JDApi.getCommentNumber(sb.toString())
+        Subscription subscription = JDApi.getCommentNumber(sb.toString())
+                .observeOn(Schedulers.io())
                 .doOnNext(commentNumbers -> {
                     if (page == 1) {
                         mVideos.clear();
                         VideoCache.getInstance(mActivity).clearAllCache();
                     }
-                })
-                .doOnCompleted(() -> {
-                    mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
-                    mLoadFinisCallBack.loadFinish(null);
                     VideoCache.getInstance(mActivity).addResultCache(GsonHelper.toString
                             (videos), page);
                 })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(commentNumbers -> {
 
                     for (int i = 0; i < videos.size(); i++) {
@@ -193,10 +202,13 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                     if (mVideos.size() < 10) {
                         loadNextPage();
                     }
+                    mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
+                    mLoadFinisCallBack.loadFinish(null);
                 }, e -> {
                     mLoadFinisCallBack.loadFinish(e);
                     mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET);
                 });
+        mActivity.addSubscription(subscription);
     }
 
     static class VideoViewHolder extends RecyclerView.ViewHolder {

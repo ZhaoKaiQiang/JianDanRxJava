@@ -1,6 +1,5 @@
 package com.socks.jiandan.adapter;
 
-import android.app.Activity;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.socks.jiandan.R;
+import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.base.ConstantString;
 import com.socks.jiandan.cache.FreshNewsCache;
 import com.socks.jiandan.callback.LoadFinishCallBack;
@@ -34,20 +34,25 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class FreshNewsAdapter extends RecyclerView.Adapter<FreshNewsAdapter.ViewHolder> {
 
-    private LoadFinishCallBack mLoadFinisCallBack;
+    private LoadFinishCallBack<Object> mLoadFinisCallBack;
     private LoadResultCallBack mLoadResultCallBack;
     private ArrayList<FreshNews> mFreshNews;
     private DisplayImageOptions options;
-    private Activity mActivity;
+    private BaseActivity mActivity;
 
     private int page;
     private int lastPosition = -1;
     private boolean isLargeMode;
 
-    public FreshNewsAdapter(Activity activity, LoadFinishCallBack loadFinisCallBack, LoadResultCallBack loadResultCallBack) {
+    public FreshNewsAdapter(BaseActivity activity, LoadFinishCallBack<Object> loadFinisCallBack, LoadResultCallBack loadResultCallBack) {
         this.mActivity = activity;
         this.isLargeMode = SPHelper.getBoolean(SettingFragment.ENABLE_FRESH_BIG, true);
         this.mLoadFinisCallBack = loadFinisCallBack;
@@ -129,41 +134,56 @@ public class FreshNewsAdapter extends RecyclerView.Adapter<FreshNewsAdapter.View
     private void loadDataByNetworkType() {
 
         if (NetWorkUtil.isNetWorkConnected(mActivity)) {
-            JDApi.getFreshNews(page)
-                    .doOnNext(freshNewses -> {
-                        if (page == 1) {
-                            mFreshNews.clear();
-                            FreshNewsCache.getInstance(mActivity).clearAllCache();
-                        }
-                        FreshNewsCache.getInstance(mActivity).addResultCache(GsonHelper.toString(freshNewses),
-                                page);
-                    })
-                    .subscribe(freshNewses -> {
-                        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
-                        mLoadFinisCallBack.loadFinish(null);
-
-                        mFreshNews.addAll(freshNewses);
-                        notifyDataSetChanged();
-                    }, e -> {
-                        mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET);
-                        mLoadFinisCallBack.loadFinish(null);
-                    });
+            loadDate();
         } else {
             loadFromCache();
         }
     }
 
+    private void loadDate() {
+        Subscription subscription = JDApi.getFreshNews(page)
+                .observeOn(Schedulers.io())
+                .doOnNext(freshNewses -> {
+                    if (page == 1) {
+                        mFreshNews.clear();
+                        FreshNewsCache.getInstance(mActivity).clearAllCache();
+                    }
+                    FreshNewsCache.getInstance(mActivity).addResultCache(GsonHelper.toString(freshNewses),
+                            page);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(freshNewses -> {
+                    mFreshNews.addAll(freshNewses);
+                    notifyDataSetChanged();
+                    mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
+                    mLoadFinisCallBack.loadFinish(null);
+                }, e -> {
+                    mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET);
+                    mLoadFinisCallBack.loadFinish(null);
+                });
+        mActivity.addSubscription(subscription);
+    }
+
     private void loadFromCache() {
-        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
-        mLoadFinisCallBack.loadFinish(null);
-
-        if (page == 1) {
-            mFreshNews.clear();
-            ToastHelper.Short(ConstantString.LOAD_NO_NETWORK);
-        }
-
-        mFreshNews.addAll(FreshNewsCache.getInstance(mActivity).getCacheByPage(page));
-        notifyDataSetChanged();
+        Observable.create(new Observable.OnSubscribe<ArrayList<FreshNews>>() {
+            @Override
+            public void call(Subscriber<? super ArrayList<FreshNews>> subscriber) {
+                subscriber.onNext(FreshNewsCache.getInstance(mActivity).getCacheByPage(page));
+                subscriber.onCompleted();
+            }
+        }).compose(JDApi.applySchedulers())
+                .doOnNext(freshNewses -> {
+                    if (page == 1) {
+                        mFreshNews.clear();
+                        ToastHelper.Short(ConstantString.LOAD_NO_NETWORK);
+                    }
+                })
+                .subscribe(freshNewses -> {
+                    mFreshNews.addAll(freshNewses);
+                    notifyDataSetChanged();
+                    mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
+                    mLoadFinisCallBack.loadFinish(null);
+                });
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

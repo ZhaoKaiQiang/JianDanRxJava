@@ -1,6 +1,5 @@
 package com.socks.jiandan.adapter;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
@@ -45,6 +44,9 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static com.socks.jiandan.R.color.secondary_text_default_material_light;
 
@@ -56,12 +58,12 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
     private boolean isWifiConnected;
 
     private ArrayList<Picture> mPictures;
-    private LoadFinishCallBack mLoadFinisCallBack;
+    private LoadFinishCallBack<Object> mLoadFinisCallBack;
     private LoadResultCallBack mLoadResultCallBack;
-    private Activity mActivity;
+    private BaseActivity mActivity;
     private LoadFinishCallBack mSaveFileCallBack;
 
-    public PictureAdapter(Activity activity, LoadResultCallBack loadResultCallBack, LoadFinishCallBack loadFinisCallBack, int type) {
+    public PictureAdapter(BaseActivity activity, LoadResultCallBack loadResultCallBack, LoadFinishCallBack<Object> loadFinisCallBack, int type) {
         mActivity = activity;
         mType = type;
         mLoadFinisCallBack = loadFinisCallBack;
@@ -203,32 +205,43 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
     }
 
     private void loadData() {
-        JDApi.getPictures(mType, page)
+        Subscription subscription = JDApi.getPictures(mType, page)
                 .flatMap(Observable::from)
                 .filter(picture -> picture.getPics() != null)
                 .toList()
+                .observeOn(Schedulers.io())
                 .doOnNext(pictures -> {
                     if (page == 1) {
                         PictureAdapter.this.mPictures.clear();
                         PictureCache.getInstance(mActivity).clearAllCache();
                     }
                 })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::getCommentCounts, e -> {
                     mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET);
                     mLoadFinisCallBack.loadFinish(null);
                 });
+        mActivity.addSubscription(subscription);
     }
 
     private void loadCache() {
-        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
-        mLoadFinisCallBack.loadFinish(null);
-        PictureCache pictureCacheUtil = PictureCache.getInstance(mActivity);
-        if (page == 1) {
-            mPictures.clear();
-            ToastHelper.Short(ConstantString.LOAD_NO_NETWORK);
-        }
-        mPictures.addAll(pictureCacheUtil.getCacheByPage(page));
-        notifyDataSetChanged();
+        Subscription subscription = Observable.create((Observable.OnSubscribe<ArrayList<Picture>>) subscriber -> {
+            subscriber.onNext(PictureCache.getInstance(mActivity).getCacheByPage(page));
+            subscriber.onCompleted();
+        }).compose(JDApi.applySchedulers())
+                .doOnNext(pictures -> {
+                    if (page == 1) {
+                        mPictures.clear();
+                        ToastHelper.Short(ConstantString.LOAD_NO_NETWORK);
+                    }
+                })
+                .subscribe(pictures -> {
+                    mPictures.addAll(pictures);
+                    notifyDataSetChanged();
+                    mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
+                    mLoadFinisCallBack.loadFinish(null);
+                });
+        mActivity.addSubscription(subscription);
     }
 
     private void getCommentCounts(final List<Picture> pictures) {

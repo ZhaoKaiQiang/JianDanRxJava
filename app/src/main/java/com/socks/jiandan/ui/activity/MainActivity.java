@@ -25,11 +25,12 @@ import com.socks.jiandan.ui.fragment.FreshNewsFragment;
 import com.socks.jiandan.ui.fragment.MainMenuFragment;
 import com.socks.jiandan.utils.IntentHelper;
 import com.socks.jiandan.utils.ToastHelper;
-import com.socks.jiandan.viewInterface.IMainView;
+import com.socks.jiandan.view.IMainView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends BaseActivity implements IMainView {
@@ -94,27 +95,30 @@ public class MainActivity extends BaseActivity implements IMainView {
     protected void onStart() {
         super.onStart();
         mRxBusComposite = new CompositeSubscription();
-        Subscription sub = RxNetWorkEvent.toObserverable().subscribe(netWorkEvent -> {
-            if (netWorkEvent.getType() == NetWorkEvent.UNAVAILABLE) {
-                if (noNetWorkDialog == null) {
-                    noNetWorkDialog = new MaterialDialog.Builder(MainActivity.this)
-                            .title(R.string.no_network)
-                            .content(R.string.open_network)
-                            .backgroundColor(getResources().getColor(JDApplication.COLOR_OF_DIALOG))
-                            .contentColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
-                            .positiveColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
-                            .negativeColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
-                            .titleColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
-                            .negativeText(R.string.no).positiveText(R.string.yes)
-                            .onPositive((dialog, which) -> IntentHelper.toSettingActivity(mContext))
-                            .cancelable(false)
-                            .build();
-                }
-                if (!noNetWorkDialog.isShowing()) {
-                    noNetWorkDialog.show();
-                }
-            }
-        });
+        Subscription sub = RxNetWorkEvent.toObserverable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(netWorkEvent -> {
+                    if (netWorkEvent.getType() == NetWorkEvent.UNAVAILABLE) {
+                        if (noNetWorkDialog == null) {
+                            noNetWorkDialog = new MaterialDialog.Builder(MainActivity.this)
+                                    .title(R.string.no_network)
+                                    .content(R.string.open_network)
+                                    .backgroundColor(getResources().getColor(JDApplication.COLOR_OF_DIALOG))
+                                    .contentColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
+                                    .positiveColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
+                                    .negativeColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
+                                    .titleColor(JDApplication.COLOR_OF_DIALOG_CONTENT)
+                                    .negativeText(R.string.no).positiveText(R.string.yes)
+                                    .onPositive((dialog, which) -> IntentHelper.toSettingActivity(mContext))
+                                    .cancelable(false)
+                                    .build();
+                        }
+                        if (!noNetWorkDialog.isShowing()) {
+                            noNetWorkDialog.show();
+                        }
+                    }
+                });
         mRxBusComposite.add(sub);
     }
 

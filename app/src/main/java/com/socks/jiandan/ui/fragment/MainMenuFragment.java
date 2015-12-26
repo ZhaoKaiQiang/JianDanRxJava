@@ -16,7 +16,7 @@ import com.socks.jiandan.adapter.MenuAdapter;
 import com.socks.jiandan.base.BaseFragment;
 import com.socks.jiandan.model.MenuItem;
 import com.socks.jiandan.ui.activity.SettingActivity;
-import com.socks.jiandan.viewInterface.IMainView;
+import com.socks.jiandan.view.IMainView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

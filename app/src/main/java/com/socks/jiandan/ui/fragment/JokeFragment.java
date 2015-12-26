@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.socks.jiandan.R;
 import com.socks.jiandan.adapter.JokeAdapter;
+import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.base.BaseFragment;
 import com.socks.jiandan.callback.LoadResultCallBack;
 import com.socks.jiandan.utils.ToastHelper;
@@ -63,7 +64,7 @@ public class JokeFragment extends BaseFragment implements LoadResultCallBack {
                 android.R.color.holo_red_light);
         mSwipeRefreshLayout.setOnRefreshListener(() -> mAdapter.loadFirst());
 
-        mAdapter = new JokeAdapter(getActivity(), mRecyclerView, this);
+        mAdapter = new JokeAdapter((BaseActivity) mContext, mRecyclerView, this);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.loadFirst();
         loading.start();

@@ -1,6 +1,5 @@
 package com.socks.jiandan.adapter;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.socks.jiandan.JDApplication;
 import com.socks.jiandan.R;
+import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.base.ConstantString;
 import com.socks.jiandan.cache.JokeCache;
 import com.socks.jiandan.callback.LoadFinishCallBack;
@@ -29,22 +29,27 @@ import com.socks.jiandan.utils.ShareUtil;
 import com.socks.jiandan.utils.String2TimeUtil;
 import com.socks.jiandan.utils.TextUtil;
 import com.socks.jiandan.utils.ToastHelper;
+import com.socks.library.KLog;
 
 import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder> {
 
     private int page;
     private int lastPosition = -1;
     private ArrayList<Joke> mJokes;
-    private Activity mActivity;
+    private BaseActivity mActivity;
     private LoadResultCallBack mLoadResultCallBack;
-    private LoadFinishCallBack mLoadFinisCallBack;
+    private LoadFinishCallBack<Object> mLoadFinisCallBack;
 
-    public JokeAdapter(Activity activity, LoadFinishCallBack loadFinisCallBack, LoadResultCallBack loadResultCallBack) {
+    public JokeAdapter(BaseActivity activity, LoadFinishCallBack<Object> loadFinisCallBack, LoadResultCallBack loadResultCallBack) {
         mActivity = activity;
         mLoadFinisCallBack = loadFinisCallBack;
         mLoadResultCallBack = loadResultCallBack;
@@ -126,31 +131,42 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
     }
 
     private void loadDataByNetworkType() {
-
         if (NetWorkUtil.isNetWorkConnected(mActivity)) {
             loadData();
         } else {
             loadCache();
         }
-
     }
 
     private void loadData() {
-        JDApi.getJokes(page).subscribe(this::getCommentCounts, e -> {
-            mLoadFinisCallBack.loadFinish(null);
+        Subscription subscription = JDApi.getJokes(page).subscribe(this::getCommentCounts, e -> {
+            mLoadFinisCallBack.loadFinish(e);
         });
+        mActivity.addSubscription(subscription);
     }
 
     private void loadCache() {
-        mLoadFinisCallBack.loadFinish(null);
-        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
-        JokeCache jokeCacheUtil = JokeCache.getInstance(mActivity);
-        if (page == 1) {
-            mJokes.clear();
-            ToastHelper.Short(ConstantString.LOAD_NO_NETWORK);
-        }
-        mJokes.addAll(jokeCacheUtil.getCacheByPage(page));
-        notifyDataSetChanged();
+        Subscription subscription = Observable
+                .create((Observable.OnSubscribe<ArrayList<Joke>>)
+                        subscriber -> {
+                            subscriber.onNext(JokeCache.getInstance(mActivity).getCacheByPage(page));
+                            subscriber.onCompleted();
+                        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(jokes -> {
+                    if (page == 1) {
+                        mJokes.clear();
+                        ToastHelper.Short(ConstantString.LOAD_NO_NETWORK);
+                    }
+                })
+                .subscribe(jokes -> {
+                    mJokes.addAll(jokes);
+                    notifyDataSetChanged();
+                    mLoadFinisCallBack.loadFinish(null);
+                    mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
+                });
+        mActivity.addSubscription(subscription);
     }
 
     private void getCommentCounts(final ArrayList<Joke> jokes) {
@@ -166,22 +182,27 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
         }
 
         JDApi.getCommentNumber(url)
-                .subscribe(commentNumbers -> {
-                    for (int i = 0; i < jokes.size(); i++) {
-                        jokes.get(i).setComment_counts(commentNumbers.get(i).comments + "");
-                    }
+                .observeOn(Schedulers.io())
+                .doOnNext(commentNumbers -> {
                     if (page == 1) {
                         mJokes.clear();
                         JokeCache.getInstance(mActivity).clearAllCache();
                     }
+                    JokeCache.getInstance(mActivity).addResultCache(GsonHelper.toString(jokes), page);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(commentNumbers -> {
+                    for (int i = 0; i < jokes.size(); i++) {
+                        jokes.get(i).setComment_counts(commentNumbers.get(i).comments + "");
+                    }
                     mJokes.addAll(jokes);
                     notifyDataSetChanged();
-                    JokeCache.getInstance(mActivity).addResultCache(GsonHelper.toString(jokes), page);
                     mLoadFinisCallBack.loadFinish(null);
                     mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
                 }, e -> {
                     mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET);
                     mLoadFinisCallBack.loadFinish(null);
+                    KLog.e(e);
                 });
     }
 

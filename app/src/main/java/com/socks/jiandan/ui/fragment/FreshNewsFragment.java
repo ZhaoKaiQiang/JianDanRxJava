@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.socks.jiandan.R;
 import com.socks.jiandan.adapter.FreshNewsAdapter;
+import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.base.BaseFragment;
 import com.socks.jiandan.base.ConstantString;
 import com.socks.jiandan.callback.LoadResultCallBack;
@@ -69,7 +70,7 @@ public class FreshNewsFragment extends BaseFragment implements LoadResultCallBac
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mAdapter = new FreshNewsAdapter(mContext, mRecyclerView, this);
+        mAdapter = new FreshNewsAdapter((BaseActivity) mContext, mRecyclerView, this);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.loadFirst();
         loading.start();

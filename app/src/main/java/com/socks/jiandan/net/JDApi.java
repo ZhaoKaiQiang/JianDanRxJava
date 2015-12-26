@@ -207,7 +207,7 @@ public class JDApi {
         }).compose(applySchedulers());
     }
 
-    private static <T> Observable.Transformer<T, T> applySchedulers() {
+    public static <T> Observable.Transformer<T, T> applySchedulers() {
         return observable -> observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
