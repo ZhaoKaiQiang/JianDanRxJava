@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.socks.jiandan.R;
 import com.socks.jiandan.adapter.PictureAdapter;
+import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.base.BaseFragment;
 import com.socks.jiandan.callback.LoadFinishCallBack;
 import com.socks.jiandan.callback.LoadResultCallBack;
@@ -80,7 +81,7 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
         mSwipeRefreshLayout.setOnRefreshListener(() -> mAdapter.loadFirst());
 
         mRecyclerView.setOnPauseListenerParams(false, true);
-        mAdapter = new PictureAdapter(getActivity(), this, mRecyclerView, mType);
+        mAdapter = new PictureAdapter((BaseActivity) getActivity(), this, mRecyclerView, mType);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setSaveFileCallBack(this);
         mAdapter.loadFirst();

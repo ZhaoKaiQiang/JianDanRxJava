@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.socks.jiandan.R;
 import com.socks.jiandan.adapter.VideoAdapter;
+import com.socks.jiandan.base.BaseActivity;
 import com.socks.jiandan.base.BaseFragment;
 import com.socks.jiandan.base.ConstantString;
 import com.socks.jiandan.callback.LoadResultCallBack;
@@ -61,7 +62,7 @@ public class VideoFragment extends BaseFragment implements LoadResultCallBack {
                 android.R.color.holo_red_light);
         mSwipeRefreshLayout.setOnRefreshListener(() -> mAdapter.loadFirst());
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        mAdapter = new VideoAdapter(getActivity(), this, mRecyclerView);
+        mAdapter = new VideoAdapter((BaseActivity) getActivity(), this, mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.loadFirst();
         loading.start();
