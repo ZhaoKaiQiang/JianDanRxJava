@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: GreetPlug
 
 android {
     compileSdkVersion 23
@@ -53,5 +54,15 @@ dependencies {
 
     compile('com.github.afollestad.material-dialogs:core:0.8.5.3@aar') {
         transitive = true
+    }
+}
+
+class GreetPlug implements Plugin<Project>{
+
+    @Override
+    void apply(Project target) {
+        target.task("hellos")<<{
+            println "Hello from the GreetingPlugin"
+        }
     }
 }

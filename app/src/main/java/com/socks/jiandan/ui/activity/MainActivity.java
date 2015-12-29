@@ -81,6 +81,8 @@ public class MainActivity extends BaseActivity implements IMainView {
             addFragment(R.id.frame_container, new FreshNewsFragment(), TAG_MENU);
             addFragment(R.id.drawer_container, new MainMenuFragment(), TAG_FRESH_NEWS);
         }
+
+        isTransitionAnimation = false;
     }
 
     @Override

@@ -23,6 +23,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
 
     private CompositeSubscription mCompositeSubscription;
     protected Context mContext;
+    protected boolean isTransitionAnimation = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,7 +49,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.anim_none, R.anim.trans_center_2_right);
+        if (isTransitionAnimation) {
+            overridePendingTransition(R.anim.anim_none, R.anim.trans_center_2_right);
+        }
     }
 
     public CompositeSubscription getCompositeSubscription() {
