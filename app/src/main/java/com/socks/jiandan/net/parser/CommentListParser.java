@@ -7,13 +7,14 @@ import com.socks.jiandan.callback.LoadFinishCallBack;
 import com.socks.jiandan.model.Commentator;
 import com.socks.jiandan.utils.TextUtil;
 import com.socks.okhttp.plus.parser.OkBaseParser;
-import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import okhttp3.Response;
 
 /**
  * Created by zhaokaiqiang on 15/11/22.

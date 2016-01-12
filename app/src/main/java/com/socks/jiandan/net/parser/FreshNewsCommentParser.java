@@ -7,7 +7,6 @@ import com.socks.jiandan.callback.LoadFinishCallBack;
 import com.socks.jiandan.model.Comment4FreshNews;
 import com.socks.jiandan.utils.GsonHelper;
 import com.socks.okhttp.plus.parser.OkBaseParser;
-import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
@@ -16,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.Response;
 
 /**
  * Created by zhaokaiqiang on 15/11/22.

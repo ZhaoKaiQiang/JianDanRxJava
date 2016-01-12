@@ -1,15 +1,17 @@
 package com.socks.jiandan.net.parser;
 
 import android.support.annotation.Nullable;
+
 import com.socks.jiandan.model.Comment4FreshNews;
 import com.socks.library.KLog;
 import com.socks.okhttp.plus.parser.OkBaseParser;
-import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+
+import okhttp3.Response;
 
 /**
  * Created by zhaokaiqiang on 15/11/22.

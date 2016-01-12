@@ -6,12 +6,13 @@ import com.google.gson.reflect.TypeToken;
 import com.socks.jiandan.model.Joke;
 import com.socks.jiandan.utils.GsonHelper;
 import com.socks.okhttp.plus.parser.OkBaseParser;
-import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+
+import okhttp3.Response;
 
 /**
  * Created by zhaokaiqiang on 15/11/22.
